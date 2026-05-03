@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>사법의 창 - 시민의 목소리로 사법을 비추다</title>
-
+    
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    
     <!-- Lucide Icons (CDN) -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -20,7 +20,7 @@
         /* 뷰 전환 애니메이션 */
         .fade-enter { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+        
         /* 사용자 지정 UI (엑셀 검색 결과 카드) */
         .result-card { border: 3px solid #000; }
         .result-image-box { border: 3px solid #000; }
@@ -37,7 +37,7 @@
                 <div class="flex items-center cursor-pointer link-home">
                     <span class="text-xl font-bold tracking-tight text-gray-900 hover:text-blue-800 transition-colors">사법의 창</span>
                 </div>
-
+                
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#search" class="text-gray-600 hover:text-blue-800 font-medium">판사/검사 검색</a>
@@ -59,7 +59,7 @@
                 </div>
             </div>
         </div>
-
+        
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -75,7 +75,7 @@
     </nav>
 
     <!-- ==========================================
-         [뷰 1] 메인 홈 화면
+         [뷰 1] 메인 홈 화면 
          ========================================== -->
     <div id="home-view" class="block fade-enter">
         <!-- Hero Section -->
@@ -88,7 +88,7 @@
                     판결에 직접 참여한 원고와 피고의 검증된 리뷰. <br class="hidden md:block"/>
                     투명한 사법 시스템을 만드는 첫 걸음, 누구나 무료로 확인하세요.
                 </p>
-
+                
                 <!-- Search Bar -->
                 <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-xl p-2 flex flex-col md:flex-row items-center">
                     <div class="flex-grow flex items-center w-full md:w-auto px-4 py-3 md:py-2">
@@ -99,7 +99,7 @@
                         검색하기
                     </button>
                 </div>
-
+                
                 <div class="mt-8 flex justify-center items-center space-x-6 text-sm text-blue-200">
                     <span class="flex items-center"><i data-lucide="trending-up" class="w-4 h-4 mr-1"></i> 인기 검색어:</span>
                     <div id="trending-container" class="flex space-x-4">
@@ -164,7 +164,7 @@
                         데이터를 불러오는 중입니다...
                     </div>
                 </div>
-
+                
                 <button class="md:hidden mt-6 w-full py-3 bg-white border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-50">
                     리뷰 전체 보기
                 </button>
@@ -462,7 +462,7 @@
         // 검색 화면 전환 및 엑셀 데이터 검색 트리거
         function showSearch(query) {
             switchView('search');
-
+            
             const resultInput = document.getElementById('result-search-input');
             const displayTerm = document.getElementById('display-search-term');
 
@@ -493,15 +493,15 @@
                 // 실제 static 폴더 내의 엑셀 파일 요청 시도
                 const response = await fetch('./static/judgelist.xlsx');
                 if (!response.ok) throw new Error('File not found');
-
+                
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-
+                
                 // header: 1 옵션으로 2차원 배열 형태로 가져오기 (행번호 x, 열 A=0, B=1...)
                 const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
+                
                 // 검색어 필터링 (대소문자 구분 없음, 공백 무시)
                 const searchQuery = query.toLowerCase().replace(/\s+/g, '');
                 const results = [];
@@ -509,7 +509,7 @@
                 for (let x = 0; x < excelData.length; x++) {
                     const row = excelData[x];
                     if (!row || row.length === 0) continue;
-
+                    
                     // 행 전체 텍스트 합쳐서 검색어 포함 여부 확인
                     const rowString = row.join(' ').toLowerCase().replace(/\s+/g, '');
                     if (rowString.includes(searchQuery)) {
@@ -560,7 +560,7 @@
                     <div class="result-image-box w-40 h-40 shrink-0 flex items-center justify-center bg-gray-50">
                         <span class="font-bold text-gray-600">${Gx}</span>
                     </div>
-
+                    
                     <!-- 텍스트 정보 영역 (우측) -->
                     <div class="flex flex-col justify-center h-full py-2 space-y-3 w-full text-center sm:text-left">
                         <h3 class="text-2xl font-extrabold text-black">${Ax}</h3>
@@ -607,14 +607,14 @@
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href').substring(1);
-
+                
                 if (targetId === 'business') {
                     showBusinessInquiry();
                     document.getElementById('mobile-menu').classList.add('hidden');
                     return;
                 }
 
-                showHome();
+                showHome(); 
                 const targetElement = document.getElementById(targetId);
                 if (targetElement) {
                     setTimeout(() => {
@@ -658,7 +658,7 @@
                 e.preventDefault();
                 loginErrorMsg.classList.add('hidden');
                 if(loginMessage) loginMessage.classList.add('hidden');
-
+                
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
 
@@ -698,6 +698,36 @@
                 bindAuthButtons();
             }
         });
+
+        // ==========================================
+        // 백엔드 API 연동 (인기 검색어 불러오기)
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTrendingData();
+        });
+
+        async function fetchTrendingData() {
+            const container = document.getElementById('trending-container');
+            try {
+                // 파이썬(app.py)의 /api/trending 주소로 데이터 요청
+                const response = await fetch('/api/trending');
+                if (!response.ok) throw new Error('API 응답 오류');
+                
+                const trends = await response.json();
+                
+                if (trends.length === 0) {
+                    container.innerHTML = `<span class="text-gray-400 text-xs">데이터가 없습니다. (엑셀 파일을 확인해주세요)</span>`;
+                } else {
+                    // 전달받은 인기 검색어를 HTML 해시태그 형태로 만들어 삽입
+                    container.innerHTML = trends.map(k => 
+                        `<span class="hover:text-white cursor-pointer font-bold transition-colors" onclick="showSearch('${k.term}')">#${k.term}</span>`
+                    ).join('');
+                }
+            } catch (error) {
+                console.error('인기 검색어 로딩 실패:', error);
+                container.innerHTML = `<span class="text-gray-400 text-xs">데이터를 불러오지 못했습니다.</span>`;
+            }
+        }
 
     </script>
 </body>
