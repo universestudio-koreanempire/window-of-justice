@@ -187,16 +187,42 @@
                     </button>
                 </div>
                 <div class="mt-6 text-center text-xs text-gray-400">
-                    사법의 창 서비스에 오신 것을 환영합니다.
+                    실제 서비스 연동을 위해서는 소스코드 내 Client ID 설정이 필요합니다.
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 기타 안내 뷰들 -->
-    <div id="terms-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4"><h3 class="text-2xl font-bold text-center mt-20">이용약관 준비중</h3></div></div>
-    <div id="privacy-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4"><h3 class="text-2xl font-bold text-center mt-20">개인정보처리방침 준비중</h3></div></div>
-    <div id="business-inquiry-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4"><h3 class="text-2xl font-bold text-center mt-20">Business 문의 준비중</h3></div></div>
+    <!-- [뷰 6] 이용약관 화면 -->
+    <div id="terms-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20">
+        <div class="pt-24 max-w-5xl mx-auto px-4 h-[calc(100vh-64px)]">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 ml-2">이용약관</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 h-full overflow-hidden flex flex-col">
+                <iframe src="./static/terms of use.pdf" class="w-full h-full flex-grow" title="이용약관 PDF" onerror="this.outerHTML='<div class=\'flex flex-col items-center justify-center h-full text-center p-8\'><i data-lucide=\'file-warning\' class=\'w-16 h-16 text-gray-300 mb-4\'></i><h3 class=\'text-xl font-bold text-gray-700\'>PDF 파일을 찾을 수 없습니다.</h3><p class=\'text-gray-500 mt-2\'>static/terms of use.pdf 파일을 확인해주세요.</p></div>'; lucide.createIcons();">
+                    <p class="text-center mt-10">브라우저가 PDF 렌더링을 지원하지 않습니다. <a href="./static/terms of use.pdf" class="text-blue-600 hover:underline">여기</a>를 눌러 다운로드 하세요.</p>
+                </iframe >
+            </div>
+        </div>
+    </div>
+
+    <!-- [뷰 7] 개인정보처리방침 화면 -->
+    <div id="privacy-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20">
+        <div class="pt-24 max-w-5xl mx-auto px-4 h-[calc(100vh-64px)]">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 ml-2">개인정보처리방침</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 h-full overflow-hidden flex flex-col">
+                <iframe src="./static/privacy policy.pdf" class="w-full h-full flex-grow" title="개인정보처리방침 PDF" onerror="this.outerHTML='<div class=\'flex flex-col items-center justify-center h-full text-center p-8\'><i data-lucide=\'file-warning\' class=\'w-16 h-16 text-gray-300 mb-4\'></i><h3 class=\'text-xl font-bold text-gray-700\'>PDF 파일을 찾을 수 없습니다.</h3><p class=\'text-gray-500 mt-2\'>static/privacy policy.pdf 파일을 확인해주세요.</p></div>'; lucide.createIcons();">
+                    <p class="text-center mt-10">브라우저가 PDF 렌더링을 지원하지 않습니다. <a href="./static/privacy policy.pdf" class="text-blue-600 hover:underline">여기</a>를 눌러 다운로드 하세요.</p>
+                </iframe >
+            </div>
+        </div>
+    </div>
+
+    <!-- [뷰 8] Business 문의 화면 -->
+    <div id="business-inquiry-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20">
+        <div class="pt-28 max-w-7xl mx-auto px-4">
+            <h3 class="text-2xl font-bold text-center mt-20">Business 문의 준비중</h3>
+        </div>
+    </div>
 
     <!-- [뷰 5] 엑셀 검색 및 Gemini AI 결과 화면 -->
     <div id="search-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20">
