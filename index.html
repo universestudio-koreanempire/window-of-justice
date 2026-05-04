@@ -258,6 +258,16 @@
                 <p id="gemini-content" class="text-gray-700 leading-relaxed text-sm whitespace-pre-wrap"></p>
             </div>
 
+            <!-- 최근 리뷰 표시 영역 (추가됨) -->
+            <div class="mt-10 border-t border-gray-200 pt-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                    <i data-lucide="message-square-text" class="w-6 h-6 mr-2 text-blue-600"></i> 최근 작성된 리뷰
+                </h3>
+                <div id="recent-reviews-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="col-span-full text-center text-gray-500 py-4">리뷰를 불러오는 중입니다...</div>
+                </div>
+            </div>
+
             <!-- 리뷰 남기기 버튼 -->
             <div class="mt-12 flex justify-center border-t border-gray-200 pt-10">
                 <button onclick="openReviewModal()" class="bg-blue-800 hover:bg-blue-900 text-white px-10 py-4 rounded-lg font-bold text-xl shadow-lg transition-colors flex items-center">
@@ -422,6 +432,44 @@
             document.getElementById('detail-hx').textContent = row[7] || 'Hx';
             
             switchView('detail');
+            loadRecentReviews(); // 상세 화면 열 때 리뷰 데이터도 함께 로드합니다.
+        }
+
+        // ==========================================
+        // 최근 리뷰 로딩 로직 (추가됨)
+        // ==========================================
+        async function loadRecentReviews() {
+            const container = document.getElementById('recent-reviews-container');
+            container.innerHTML = `<div class="col-span-full text-center text-gray-500 py-4">리뷰를 불러오는 중입니다...</div>`;
+            try {
+                const response = await fetch('/api/reviews/recent');
+                if (!response.ok) throw new Error('응답 오류');
+                const reviews = await response.json();
+                
+                if (reviews.length === 0) {
+                    container.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 bg-white rounded-xl shadow-sm border border-gray-200">아직 작성된 리뷰가 없습니다. 첫 리뷰를 남겨주세요!</div>`;
+                    return;
+                }
+
+                container.innerHTML = reviews.map(rev => {
+                    const stars = '⭐'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
+                    return `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="font-bold text-gray-800">${rev.userId}</span>
+                                <span class="text-yellow-400 text-sm tracking-widest">${stars}</span>
+                            </div>
+                            <p class="text-gray-600 text-sm line-clamp-4 leading-relaxed">"${rev.content}"</p>
+                        </div>
+                        <div class="mt-4 text-xs text-gray-400 text-right">${rev.date}</div>
+                    </div>
+                    `;
+                }).join('');
+                lucide.createIcons();
+            } catch (error) {
+                container.innerHTML = `<div class="col-span-full text-center text-red-500 py-4">리뷰를 불러오는 중 오류가 발생했습니다.</div>`;
+            }
         }
 
         // ==========================================
@@ -469,6 +517,7 @@
                 if(response.ok) {
                     alert("리뷰가 성공적으로 등록되어 엑셀(review.xlsx) 파일에 저장되었습니다!");
                     closeReviewModal();
+                    loadRecentReviews(); // 작성 완료 후 리뷰 목록을 즉시 갱신합니다!
                 } else {
                     throw new Error("서버 응답 오류");
                 }
