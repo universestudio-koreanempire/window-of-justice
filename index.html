@@ -214,7 +214,7 @@
         </div>
     </div>
 
-    <!-- [뷰 9] 법조인 상세 화면 (클릭 시 나오는 화면) -->
+    <!-- [뷰 9] 법조인 상세 화면 -->
     <div id="detail-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20">
         <div class="pt-28 max-w-5xl mx-auto px-4">
             <button onclick="switchView('search')" class="mb-6 flex items-center text-blue-600 font-bold hover:text-blue-800 transition-colors">
@@ -223,13 +223,12 @@
             
             <div class="bg-white rounded-xl shadow-sm border border-gray-300 p-8 flex flex-col md:flex-row gap-10">
                 <!-- 좌측: Hx 값 사각형 -->
-                <div class="result-image-box w-48 h-48 shrink-0 flex items-center justify-center bg-gray-50">
+                <div class="result-image-box w-48 h-48 shrink-0 flex items-center justify-center bg-gray-50 border-4 border-black">
                     <span id="detail-hx" class="font-extrabold text-gray-700 text-3xl"></span>
                 </div>
                 
                 <!-- 우측: 정보 영역 -->
                 <div class="flex flex-col justify-center space-y-3 w-full">
-                    <!-- Ax 값: 제일 크게 (text-4xl) -->
                     <h2 id="detail-ax" class="text-4xl font-black text-black mb-2"></h2> 
                     <p id="detail-bx" class="text-lg font-medium text-black"></p>
                     <p id="detail-cx" class="text-lg font-medium text-black"></p>
@@ -247,18 +246,19 @@
                 </button>
             </div>
 
+            <!-- AI 분석 결과 출력 박스 -->
             <div id="gemini-ai-box" class="hidden mt-4 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl p-6 shadow-sm">
                 <div class="flex items-center mb-3">
                     <i data-lucide="cpu" class="w-6 h-6 text-indigo-600 mr-2"></i>
                     <h3 class="font-bold text-indigo-900 text-lg">AI 성향 요약 리포트</h3>
                 </div>
                 <div id="gemini-loading" class="hidden flex items-center text-indigo-400 text-sm">
-                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin mr-2"></i> 데이터를 종합하여 AI가 분석 중입니다...
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin mr-2"></i> 플랫폼 전체 리뷰를 종합하여 AI가 분석 중입니다...
                 </div>
                 <p id="gemini-content" class="text-gray-700 leading-relaxed text-sm whitespace-pre-wrap"></p>
             </div>
 
-            <!-- 최근 리뷰 표시 영역 (추가됨) -->
+            <!-- 화면 표시용 최근 리뷰 (3개) 영역 -->
             <div class="mt-10 border-t border-gray-200 pt-8">
                 <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                     <i data-lucide="message-square-text" class="w-6 h-6 mr-2 text-blue-600"></i> 최근 작성된 리뷰
@@ -340,7 +340,7 @@
 
         let currentSearchQuery = "";
         let currentExcelResults = [];
-        let currentDetailAx = ""; // 현재 상세 화면에 띄워진 Ax 값 저장용
+        let currentDetailAx = ""; 
 
         function showSearch(query) {
             switchView('search');
@@ -382,7 +382,6 @@
                 if (currentExcelResults.length === 0) {
                     container.innerHTML = `<div class="bg-white rounded-xl py-20 text-center"><i data-lucide="search-x" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i><h3 class="text-xl font-bold text-gray-700">검색 결과가 없습니다.</h3></div>`;
                 } else {
-                    // 검색 목록 (Gx 대신 Hx 출력)
                     container.innerHTML = currentExcelResults.map((row, index) => {
                         const Ax = row[0] || '정보 없음';
                         const Bx = row[1] || '';
@@ -418,11 +417,10 @@
             const row = currentExcelResults[index];
             if(!row) return;
 
-            document.getElementById('gemini-ai-box').classList.add('hidden'); // AI 박스 초기화
+            document.getElementById('gemini-ai-box').classList.add('hidden'); 
+            
+            currentDetailAx = row[0] || '정보 없음'; 
 
-            currentDetailAx = row[0] || '정보 없음'; // 현재 보고 있는 Ax 값 저장
-
-            // 우측 위부터 순서대로 나열 (Ax는 폰트 크게)
             document.getElementById('detail-ax').textContent = currentDetailAx; 
             document.getElementById('detail-bx').textContent = row[1] || '';
             document.getElementById('detail-cx').textContent = row[2] || '';
@@ -430,22 +428,19 @@
             document.getElementById('detail-ex').textContent = row[4] || '';
             document.getElementById('detail-fx').textContent = row[5] || '';
             document.getElementById('detail-gx').textContent = row[6] || '';
-            
-            // 좌측 Hx 값 사각형
             document.getElementById('detail-hx').textContent = row[7] || 'Hx';
             
             switchView('detail');
-            loadRecentReviews(); // 상세 화면 열 때 리뷰 데이터도 함께 로드합니다.
+            loadRecentReviews(); 
         }
 
         // ==========================================
-        // 최근 리뷰 로딩 로직 (추가됨)
+        // 리뷰 관련 로직 (화면 표시용 최근 3개 리뷰)
         // ==========================================
         async function loadRecentReviews() {
             const container = document.getElementById('recent-reviews-container');
             container.innerHTML = `<div class="col-span-full text-center text-gray-500 py-4">리뷰를 불러오는 중입니다...</div>`;
             try {
-                // API 호출 시 쿼리 파라미터로 대상자(Ax) 정보 전달
                 const response = await fetch(`/api/reviews/recent?target=${encodeURIComponent(currentDetailAx)}`);
                 if (!response.ok) throw new Error('응답 오류');
                 const reviews = await response.json();
@@ -476,9 +471,6 @@
             }
         }
 
-        // ==========================================
-        // 리뷰 작성 모달 및 백엔드 전송
-        // ==========================================
         function openReviewModal() {
             const user = localStorage.getItem('auth_user');
             if (!user) {
@@ -511,7 +503,6 @@
             errorDiv.classList.add('hidden');
             
             try {
-                // 파이썬 백엔드(/api/review)로 저장 요청 (대상자 Ax 정보 추가)
                 const response = await fetch('/api/review', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -521,7 +512,7 @@
                 if(response.ok) {
                     alert("리뷰가 성공적으로 등록되어 엑셀(review.xlsx) 파일에 저장되었습니다!");
                     closeReviewModal();
-                    loadRecentReviews(); // 작성 완료 후 리뷰 목록을 즉시 갱신합니다!
+                    loadRecentReviews();
                 } else {
                     throw new Error("서버 응답 오류");
                 }
@@ -532,7 +523,60 @@
         }
 
         // ==========================================
-        // OAuth 및 기본 UI 로직
+        // Gemini API 연동 (AI 분석 시 '전체 리뷰' 참조 로직)
+        // ==========================================
+        async function callGeminiAI() {
+            if (!currentDetailAx) return;
+            const aiBox = document.getElementById('gemini-ai-box');
+            const aiLoading = document.getElementById('gemini-loading');
+            const aiContent = document.getElementById('gemini-content');
+            
+            aiBox.classList.remove('hidden'); 
+            aiLoading.classList.remove('hidden'); 
+            aiContent.textContent = '';
+            
+            // 1. AI 참조용 사이트 내 '전체 리뷰' 데이터 가져오기 (새 API 호출)
+            let reviewContext = "";
+            try {
+                const revResponse = await fetch(`/api/reviews/all?target=${encodeURIComponent(currentDetailAx)}`);
+                if (revResponse.ok) {
+                    const reviews = await revResponse.json();
+                    if (reviews.length > 0) {
+                        reviewContext = "다음은 이 법관에 대해 실제 시민들이 남긴 사이트 내 전체 리뷰 데이터입니다:\n";
+                        reviewContext += reviews.map((r, idx) => `${idx + 1}. 별점 ${r.rating}점: "${r.content}"`).join('\n') + "\n\n";
+                    } else {
+                        reviewContext = "현재 이 법관에 대해 플랫폼에 등록된 시민 리뷰는 없습니다.\n\n";
+                    }
+                }
+            } catch (e) {
+                console.error("전체 리뷰 데이터 로드 실패", e);
+            }
+
+            // 2. Gemini API 호출
+            const apiKey = ""; 
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const promptText = `당신은 '사법의 창'이라는 플랫폼의 수석 AI 법률 데이터 분석관입니다. 사용자가 '${currentDetailAx}'(판사/검사)에 대한 종합 분석을 요청했습니다. 
+            
+${reviewContext}위의 데이터(별점 및 내용)를 반드시 분석에 적극적으로 반영하여, 이 법관의 재판 진행 스타일, 특징, 시민들의 평가를 종합한 분석 리포트를 3문장으로 전문성 있게 요약해주세요. (마지막에는 실제 인물이 아닌 테스트 데모임을 명시해주세요.)`;
+
+            try {
+                const response = await fetch(endpoint, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] }) 
+                });
+                const data = await response.json();
+                aiLoading.classList.add('hidden');
+                aiContent.textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "분석을 생성하지 못했습니다.";
+            } catch (error) {
+                aiLoading.classList.add('hidden'); 
+                aiContent.textContent = "AI 분석 서버 통신 중 오류가 발생했습니다.";
+            }
+        }
+
+        // ==========================================
+        // OAuth 및 기타 기본 UI 로직
         // ==========================================
         const GOOGLE_CLIENT_ID = "000-101"; 
         const NAVER_CLIENT_ID = "000-101";
@@ -614,27 +658,6 @@
                 if (trends.length === 0) container.innerHTML = `<span class="text-gray-400 text-xs">데이터가 없습니다.</span>`;
                 else container.innerHTML = trends.map(k => `<span class="hover:text-white cursor-pointer font-bold transition-colors" onclick="showSearch('${k.term}')">#${k.term}</span>`).join('');
             } catch (error) { container.innerHTML = `<span class="text-gray-400 text-xs">데이터를 불러오지 못했습니다.</span>`; }
-        }
-
-        async function callGeminiAI() {
-            if (!currentSearchQuery) return;
-            const aiBox = document.getElementById('gemini-ai-box');
-            const aiLoading = document.getElementById('gemini-loading');
-            const aiContent = document.getElementById('gemini-content');
-            aiBox.classList.remove('hidden'); aiLoading.classList.remove('hidden'); aiContent.textContent = '';
-            
-            const apiKey = ""; 
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const promptText = `당신은 '사법의 창'이라는 플랫폼의 수석 AI 법률 데이터 분석관입니다. 사용자가 '${currentSearchQuery}'라는 키워드로 판사/검사 정보를 검색했습니다. 이 이름에 대해 일반적인 법률적, 사회적 성향에 대한 가상의 종합 분석 리포트를 3문장으로 전문성 있게 작성해주세요.`;
-
-            try {
-                const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] }) });
-                const data = await response.json();
-                aiLoading.classList.add('hidden');
-                aiContent.textContent = data.candidates?.[0]?.content?.parts?.[0]?.text || "분석 실패";
-            } catch (error) {
-                aiLoading.classList.add('hidden'); aiContent.textContent = "오류 발생. 잠시 후 시도해주세요.";
-            }
         }
     </script>
 </body>
