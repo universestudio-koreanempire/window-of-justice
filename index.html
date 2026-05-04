@@ -340,6 +340,7 @@
 
         let currentSearchQuery = "";
         let currentExcelResults = [];
+        let currentDetailAx = ""; // 현재 상세 화면에 띄워진 Ax 값 저장용
 
         function showSearch(query) {
             switchView('search');
@@ -419,8 +420,10 @@
 
             document.getElementById('gemini-ai-box').classList.add('hidden'); // AI 박스 초기화
 
+            currentDetailAx = row[0] || '정보 없음'; // 현재 보고 있는 Ax 값 저장
+
             // 우측 위부터 순서대로 나열 (Ax는 폰트 크게)
-            document.getElementById('detail-ax').textContent = row[0] || '정보 없음'; 
+            document.getElementById('detail-ax').textContent = currentDetailAx; 
             document.getElementById('detail-bx').textContent = row[1] || '';
             document.getElementById('detail-cx').textContent = row[2] || '';
             document.getElementById('detail-dx').textContent = row[3] || '';
@@ -442,7 +445,8 @@
             const container = document.getElementById('recent-reviews-container');
             container.innerHTML = `<div class="col-span-full text-center text-gray-500 py-4">리뷰를 불러오는 중입니다...</div>`;
             try {
-                const response = await fetch('/api/reviews/recent');
+                // API 호출 시 쿼리 파라미터로 대상자(Ax) 정보 전달
+                const response = await fetch(`/api/reviews/recent?target=${encodeURIComponent(currentDetailAx)}`);
                 if (!response.ok) throw new Error('응답 오류');
                 const reviews = await response.json();
                 
@@ -507,11 +511,11 @@
             errorDiv.classList.add('hidden');
             
             try {
-                // 파이썬 백엔드(/api/review)로 저장 요청
+                // 파이썬 백엔드(/api/review)로 저장 요청 (대상자 Ax 정보 추가)
                 const response = await fetch('/api/review', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: user, content: content, rating: rating })
+                    body: JSON.stringify({ userId: user, content: content, rating: rating, targetId: currentDetailAx })
                 });
                 
                 if(response.ok) {
