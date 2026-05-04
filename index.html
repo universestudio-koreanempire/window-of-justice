@@ -5,32 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>사법의 창 - 시민의 목소리로 사법을 비추다</title>
     
-    <!-- Tailwind CSS (CDN) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Lucide Icons (CDN) -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Excel 파싱을 위한 SheetJS 라이브러리 추가 -->
+    <!-- SheetJS (Excel) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         html { scroll-behavior: smooth; }
-        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif; }
-        /* 뷰 전환 애니메이션 */
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; }
         .fade-enter { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        /* 사용자 지정 UI (엑셀 검색 결과 카드) */
+        /* 엑셀 검색 결과 카드 UI */
         .result-card { border: 3px solid #000; }
         .result-image-box { border: 3px solid #000; }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50 text-gray-800">
 
-    <!-- ==========================================
-         공통 Navigation Bar
-         ========================================== -->
+    <!-- 공통 Navigation Bar -->
     <nav id="main-nav" class="fixed w-full bg-white shadow-sm z-50 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -38,7 +35,6 @@
                     <span class="text-xl font-bold tracking-tight text-gray-900 hover:text-blue-800 transition-colors">사법의 창</span>
                 </div>
                 
-                <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#search" class="text-gray-600 hover:text-blue-800 font-medium">판사/검사 검색</a>
                     <a href="#reviews" class="text-gray-600 hover:text-blue-800 font-medium">검증된 리뷰</a>
@@ -46,12 +42,10 @@
                         <i data-lucide="building-2" class="w-4 h-4 mr-1"></i> Business
                     </a>
                     <div id="nav-auth-desktop" class="flex items-center space-x-3">
-                        <button class="btn-login text-gray-600 hover:text-blue-800 font-medium transition-colors">로그인</button>
-                        <button class="btn-signup bg-blue-800 text-white px-5 py-2 rounded-md font-medium hover:bg-blue-900 transition-colors">회원가입</button>
+                        <button class="btn-signup bg-blue-800 text-white px-5 py-2 rounded-md font-medium hover:bg-blue-900 transition-colors">시작하기</button>
                     </div>
                 </div>
 
-                <!-- Mobile Menu Button -->
                 <div class="md:hidden flex items-center">
                     <button id="mobile-menu-btn" class="text-gray-600 focus:outline-none">
                         <i data-lucide="menu" class="h-6 w-6"></i>
@@ -60,44 +54,31 @@
             </div>
         </div>
         
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="#search" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md">판사/검사 검색</a>
                 <a href="#reviews" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-md">검증된 리뷰</a>
                 <a href="#business" class="block px-3 py-2 text-blue-600 font-bold hover:bg-blue-50 rounded-md">Business 플랜</a>
                 <div id="nav-auth-mobile" class="px-3 py-4 space-y-2 border-t border-gray-100 mt-2">
-                    <button class="btn-login w-full bg-white text-blue-800 border border-blue-800 px-4 py-2 rounded-md font-medium hover:bg-blue-50 transition-colors">로그인</button>
-                    <button class="btn-signup w-full bg-blue-800 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-900 transition-colors">회원가입</button>
+                    <button class="btn-signup w-full bg-blue-800 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-900 transition-colors">시작하기</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- ==========================================
-         [뷰 1] 메인 홈 화면 
-         ========================================== -->
+    <!-- [뷰 1] 메인 홈 화면 -->
     <div id="home-view" class="block fade-enter">
-        <!-- Hero Section -->
         <section id="search" class="pt-28 pb-20 bg-gradient-to-br from-slate-900 to-blue-900 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
-                    시민의 목소리로 <br class="md:hidden" />사법을 비추다
-                </h1>
-                <p class="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
-                    판결에 직접 참여한 원고와 피고의 검증된 리뷰. <br class="hidden md:block"/>
-                    투명한 사법 시스템을 만드는 첫 걸음, 누구나 무료로 확인하세요.
-                </p>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">시민의 목소리로 <br class="md:hidden" />사법을 비추다</h1>
+                <p class="text-lg md:text-xl text-blue-100 mb-10 max-w-2xl mx-auto">판결에 직접 참여한 원고와 피고의 검증된 리뷰. <br class="hidden md:block"/>투명한 사법 시스템을 만드는 첫 걸음, 누구나 무료로 확인하세요.</p>
                 
-                <!-- Search Bar -->
                 <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-xl p-2 flex flex-col md:flex-row items-center">
                     <div class="flex-grow flex items-center w-full md:w-auto px-4 py-3 md:py-2">
                         <i data-lucide="search" class="h-6 w-6 text-gray-400 mr-3"></i>
                         <input id="main-search-input" type="text" placeholder="판사/검사 이름, 소속기관명으로 검색해보세요." class="w-full text-gray-800 focus:outline-none text-lg placeholder-gray-400"/>
                     </div>
-                    <button id="main-search-btn" class="w-full md:w-auto mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 md:py-3 rounded-md font-bold text-lg transition-colors whitespace-nowrap">
-                        검색하기
-                    </button>
+                    <button id="main-search-btn" class="w-full md:w-auto mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 md:py-3 rounded-md font-bold text-lg transition-colors whitespace-nowrap">검색하기</button>
                 </div>
                 
                 <div class="mt-8 flex justify-center items-center space-x-6 text-sm text-blue-200">
@@ -109,43 +90,30 @@
             </div>
         </section>
 
-        <!-- Top Banner Ad -->
-        <div class="w-full bg-gray-50 py-6 border-b border-gray-200 flex justify-center px-4">
-            <div class="w-full max-w-[980px] h-[120px] bg-gray-200 flex items-center justify-center text-gray-400 font-medium tracking-widest text-xs rounded border border-gray-300 border-dashed">
-                [ Google ADS 광고 영역 (980 x 120) ]
-            </div>
-        </div>
-
-        <!-- Core Features Overview -->
+        <!-- Features Overview -->
         <section class="py-16 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                     <div class="text-center">
-                        <div class="bg-blue-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                            <i data-lucide="shield-check" class="h-8 w-8 text-blue-600"></i>
-                        </div>
+                        <div class="bg-blue-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4"><i data-lucide="shield-check" class="h-8 w-8 text-blue-600"></i></div>
                         <h3 class="text-xl font-bold mb-2 text-gray-900">당사자 인증 리뷰</h3>
                         <p class="text-gray-600">실제 판결에 참여한 원고와 피고만 리뷰를 작성할 수 있어 정보의 신뢰성을 보장합니다.</p>
                     </div>
                     <div class="text-center">
-                        <div class="bg-blue-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                            <i data-lucide="bar-chart-3" class="h-8 w-8 text-blue-600"></i>
-                        </div>
+                        <div class="bg-blue-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4"><i data-lucide="bar-chart-3" class="h-8 w-8 text-blue-600"></i></div>
                         <h3 class="text-xl font-bold mb-2 text-gray-900">판사·검사별 사건 통계</h3>
-                        <p class="text-gray-600">담당 법관 및 검사의 과거 판결/처분 성향, 유사 사건 통계 및 관련 뉴스 기사를 한눈에 제공합니다.</p>
+                        <p class="text-gray-600">담당 법관 및 검사의 과거 판결/처분 성향, 유사 사건 통계 및 관련 뉴스 기사를 제공합니다.</p>
                     </div>
                     <div class="text-center">
-                        <div class="bg-blue-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                            <i data-lucide="users" class="h-8 w-8 text-blue-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-2 text-gray-900">열린 시민 광장</h3>
-                        <p class="text-gray-600">모든 시민이 무료로 데이터를 열람하고 사법부의 판결에 대한 의견을 자유롭게 교환합니다.</p>
+                        <div class="bg-blue-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4"><i data-lucide="cpu" class="h-8 w-8 text-blue-600"></i></div>
+                        <h3 class="text-xl font-bold mb-2 text-gray-900">Gemini AI 분석</h3>
+                        <p class="text-gray-600">Google의 최신 AI 모델인 Gemini가 법관의 특징과 리뷰 데이터를 빠르고 정확하게 분석 요약해 줍니다.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Verified Reviews Section -->
+        <!-- 복구된 검증된 리뷰 섹션 -->
         <section id="reviews" class="py-16 bg-gray-50 border-t border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-end mb-8">
@@ -158,9 +126,8 @@
                     </a>
                 </div>
 
-                <div id="reviews-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Data will be injected here by JS -->
-                    <div class="col-span-full py-20 text-center text-gray-500">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="col-span-full py-20 text-center text-gray-500 font-medium text-lg bg-white rounded-xl shadow-sm border border-gray-200">
                         데이터를 불러오는 중입니다...
                     </div>
                 </div>
@@ -171,269 +138,112 @@
             </div>
         </section>
 
-        <!-- Middle Banner Ad -->
-        <div class="w-full bg-gray-50 py-10 border-y border-gray-200 flex justify-center px-4">
-            <div class="w-full max-w-[980px] h-[120px] bg-gray-200 flex items-center justify-center text-gray-400 font-medium tracking-widest text-xs rounded border border-gray-300 border-dashed">
-                [ Google ADS 광고 영역 (980 x 120) ]
-            </div>
-        </div>
-
         <!-- Business Model Section -->
         <section id="business" class="py-20 bg-slate-900 text-white relative overflow-hidden">
-            <div class="absolute top-0 right-0 -mr-20 -mt-20 opacity-10">
-                <i data-lucide="trending-up" class="w-96 h-96"></i>
-            </div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="text-center max-w-3xl mx-auto mb-16">
                     <span class="text-blue-400 font-bold tracking-wider uppercase text-sm mb-2 block">Premium Data Solution</span>
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                        데이터 이면의 맥락을 읽어내는<br />
-                        <span class="text-blue-400">Business 심층 분석</span>
-                    </h2>
-                    <p class="text-slate-300 text-lg">
-                        기업, 언론사, 법무법인 및 연구 기관을 위한 프리미엄 데이터 플랫폼입니다.<br />
-                        시민들의 리뷰 데이터와 판결 기록을 융합하여 독보적인 인사이트를 제공합니다.
-                    </p>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">데이터 이면의 맥락을 읽어내는<br /><span class="text-blue-400">Business 심층 분석</span></h2>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="bg-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700 hover:border-blue-500 transition-colors">
-                        <i data-lucide="message-square" class="w-10 h-10 text-blue-400 mb-6"></i>
-                        <h3 class="text-xl font-bold mb-3">여론 흐름 및 감성 분석</h3>
-                        <p class="text-slate-400 leading-relaxed">
-                            특정 사건이나 사회적 이슈에 대한 시민들의 리뷰 데이터를 자연어 처리(NLP)로 분석하여, 사법부에 대한 여론의 향방을 실시간으로 추적합니다.
-                        </p>
-                    </div>
-                    <div class="bg-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700 hover:border-blue-500 transition-colors">
-                        <i data-lucide="building-2" class="w-10 h-10 text-blue-400 mb-6"></i>
-                        <h3 class="text-xl font-bold mb-3">정치·사회적 지형 분석</h3>
-                        <p class="text-slate-400 leading-relaxed">
-                            판결 동향과 시민의 반응을 교차 분석하여, 다가오는 입법 트렌드나 정치적 움직임을 예측하는 거시적 지표를 리포트 형태로 제공합니다.
-                        </p>
-                    </div>
-                    <div class="bg-slate-800/50 backdrop-blur-sm p-8 rounded-2xl border border-slate-700 hover:border-blue-500 transition-colors">
-                        <i data-lucide="bar-chart-3" class="w-10 h-10 text-blue-400 mb-6"></i>
-                        <h3 class="text-xl font-bold mb-3">맞춤형 판결 통계 API</h3>
-                        <p class="text-slate-400 leading-relaxed">
-                            유형별 사건 발생 통계, 지역별 판결 성향 등 원시 데이터(Raw Data)에 접근할 수 있는 전용 API와 맞춤형 대시보드를 제공합니다.
-                        </p>
-                    </div>
-                </div>
-
                 <div class="mt-16 text-center">
-                    <button id="btn-business-inquiry" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-blue-600/30 transition-all">
-                        Business 플랜 문의하기
-                    </button>
-                    <p class="mt-4 text-sm text-slate-400">맞춤형 컨설팅 및 데모 시연을 신청할 수 있습니다.</p>
+                    <button id="btn-business-inquiry" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg transition-all">Business 플랜 문의하기</button>
                 </div>
             </div>
         </section>
 
         <!-- Footer -->
         <footer class="bg-white py-12 border-t border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="flex items-center mb-4 md:mb-0 cursor-pointer link-home">
-                        <span class="text-lg font-bold text-gray-900">사법의 창</span>
-                    </div>
-                    <div class="flex space-x-6 text-sm text-gray-500 mb-4 md:mb-0">
-                        <a href="#" class="hover:text-gray-900">서비스 소개</a>
-                        <a href="#" id="link-terms" class="hover:text-gray-900">이용약관</a>
-                        <a href="#" id="link-privacy" class="hover:text-gray-900 font-bold">개인정보처리방침</a>
-                    </div>
-                </div>
-                <div class="mt-8 text-center md:text-left text-sm text-gray-400">
-                    <p>&copy; 2026 사법의 창. All rights reserved.</p>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0 cursor-pointer link-home"><span class="text-lg font-bold text-gray-900">사법의 창</span></div>
+                <div class="flex space-x-6 text-sm text-gray-500">
+                    <a href="#" id="link-terms" class="hover:text-gray-900">이용약관</a>
+                    <a href="#" id="link-privacy" class="hover:text-gray-900 font-bold">개인정보처리방침</a>
                 </div>
             </div>
         </footer>
     </div>
 
-
-    <!-- ==========================================
-         [뷰 2, 3, 4, 6, 7, 8] 기타 뷰 컨테이너들 (생략 없이 포함)
-         ========================================== -->
+    <!-- [뷰 2] 소셜 로그인 화면 -->
     <div id="login-view" class="hidden fade-enter min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <!-- 로그인 폼 영역 (이전 코드와 동일) -->
         <div class="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
             <div class="inline-flex items-center justify-center cursor-pointer link-home mb-6 group">
                 <i data-lucide="arrow-left" class="w-5 h-5 text-gray-400 mr-2 group-hover:text-blue-800 transition-colors"></i>
                 <span class="text-2xl font-extrabold tracking-tight text-gray-900 group-hover:text-blue-800 transition-colors">사법의 창</span>
             </div>
-            <h2 class="text-center text-3xl font-extrabold text-gray-900">로그인</h2>
-            <p class="mt-2 text-center text-sm text-gray-600">또는 <a href="#" class="btn-signup font-medium text-blue-600 hover:text-blue-500">새로운 계정 만들기</a></p>
+            <h2 class="text-center text-3xl font-extrabold text-gray-900">시작하기</h2>
+            <p class="mt-2 text-center text-sm text-gray-600">소셜 계정으로 3초 만에 간편하게 로그인하세요.</p>
         </div>
+        
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-gray-100">
-                <form id="login-form" class="space-y-6">
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">이메일 주소</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="mail" class="h-5 w-5 text-gray-400"></i></div>
-                            <input id="email" name="email" type="email" required class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 sm:text-sm border-gray-300 rounded-md bg-gray-50 border outline-none" placeholder="user@example.com">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">비밀번호</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="lock" class="h-5 w-5 text-gray-400"></i></div>
-                            <input id="password" name="password" type="password" required class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 sm:text-sm border-gray-300 rounded-md bg-gray-50 border outline-none" placeholder="••••••••">
-                        </div>
-                    </div>
-                    <div id="login-message" class="hidden text-sm font-medium text-center mb-2"></div>
-                    <div id="login-error" class="hidden text-red-500 text-sm font-medium text-center"></div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <input id="remember-me" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                            <label for="remember-me" class="ml-2 block text-sm text-gray-900">로그인 상태 유지</label>
-                        </div>
-                        <div class="text-sm">
-                            <a href="#" id="btn-forgot-password" class="font-medium text-blue-600 hover:text-blue-500">비밀번호를 잊으셨나요?</a>
-                        </div>
-                    </div>
-                    <div><button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-900">로그인</button></div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="signup-view" class="hidden fade-enter min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <!-- 회원가입 폼 영역 (이전 코드와 동일) -->
-        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
-            <div class="inline-flex items-center justify-center cursor-pointer link-home mb-6 group">
-                <i data-lucide="arrow-left" class="w-5 h-5 text-gray-400 mr-2 group-hover:text-blue-800 transition-colors"></i>
-                <span class="text-2xl font-extrabold tracking-tight text-gray-900 group-hover:text-blue-800 transition-colors">사법의 창</span>
-            </div>
-            <h2 class="text-center text-3xl font-extrabold text-gray-900">회원가입</h2>
-            <p class="mt-2 text-center text-sm text-gray-600">이미 계정이 있으신가요? <a href="#" class="btn-login font-medium text-blue-600 hover:text-blue-500">로그인하기</a></p>
-        </div>
-        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-gray-100">
-                <form id="signup-form" class="space-y-6">
-                    <div>
-                        <label for="signup-name" class="block text-sm font-medium text-gray-700">이름</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="user" class="h-5 w-5 text-gray-400"></i></div>
-                            <input id="signup-name" type="text" required class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 sm:text-sm border-gray-300 rounded-md bg-gray-50 border outline-none" placeholder="홍길동">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="signup-dob" class="block text-sm font-medium text-gray-700">생년월일</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="calendar" class="h-5 w-5 text-gray-400"></i></div>
-                            <input id="signup-dob" type="date" required class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 sm:text-sm border-gray-300 rounded-md bg-gray-50 border outline-none text-gray-600">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="signup-email" class="block text-sm font-medium text-gray-700">이메일 주소</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="mail" class="h-5 w-5 text-gray-400"></i></div>
-                            <input id="signup-email" type="email" required class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 sm:text-sm border-gray-300 rounded-md bg-gray-50 border outline-none" placeholder="user@example.com">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="signup-password" class="block text-sm font-medium text-gray-700">비밀번호 (6자 이상)</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="lock" class="h-5 w-5 text-gray-400"></i></div>
-                            <input id="signup-password" type="password" required class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 sm:text-sm border-gray-300 rounded-md bg-gray-50 border outline-none" placeholder="••••••••">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="signup-password-confirm" class="block text-sm font-medium text-gray-700">비밀번호 확인</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="check-circle" class="h-5 w-5 text-gray-400"></i></div>
-                            <input id="signup-password-confirm" type="password" required class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 sm:text-sm border-gray-300 rounded-md bg-gray-50 border outline-none" placeholder="••••••••">
-                        </div>
-                    </div>
-                    <div id="signup-error" class="hidden text-red-500 text-sm font-medium text-center"></div>
-                    <div><button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-900">가입하기</button></div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="forgot-password-view" class="hidden fade-enter min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center mb-6">
-            <div class="inline-flex items-center justify-center cursor-pointer link-home mb-6 group">
-                <i data-lucide="arrow-left" class="w-5 h-5 text-gray-400 mr-2 group-hover:text-blue-800 transition-colors"></i>
-                <span class="text-2xl font-extrabold tracking-tight text-gray-900 group-hover:text-blue-800 transition-colors">사법의 창</span>
-            </div>
-            <h2 class="text-center text-3xl font-extrabold text-gray-900">비밀번호 찾기</h2>
-            <p class="mt-2 text-center text-sm text-gray-600">가입하신 이메일 주소를 입력하시면<br/>비밀번호 재설정 링크를 보내드립니다.</p>
-        </div>
-        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-gray-100">
-                <form id="forgot-password-form" class="space-y-6">
-                    <div>
-                        <label for="forgot-email" class="block text-sm font-medium text-gray-700">이메일 주소</label>
-                        <div class="mt-1 relative rounded-md shadow-sm">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i data-lucide="mail" class="h-5 w-5 text-gray-400"></i></div>
-                            <input id="forgot-email" type="email" required class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 sm:text-sm border-gray-300 rounded-md bg-gray-50 border outline-none" placeholder="user@example.com">
-                        </div>
-                    </div>
-                    <div id="forgot-password-msg" class="hidden"></div>
-                    <div><button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-800 hover:bg-blue-900">재설정 링크 발송하기</button></div>
-                    <div class="text-center mt-4"><a href="#" class="btn-login font-medium text-sm text-gray-500 hover:text-gray-700">로그인 화면으로 돌아가기</a></div>
-                </form>
+            <div class="bg-white py-12 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-gray-100">
+                <div class="space-y-5">
+                    <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center py-4 px-4 border border-gray-300 rounded-xl shadow-sm bg-white text-base font-bold text-gray-700 hover:bg-gray-50 transition-colors">
+                        <svg class="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        Google로 시작하기
+                    </button>
+                    <button onclick="loginWithNaver()" class="w-full flex items-center justify-center py-4 px-4 border border-transparent rounded-xl shadow-sm bg-[#03C75A] text-base font-bold text-white hover:bg-[#02b350] transition-colors">
+                        <svg class="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.273 12.845L7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845z" fill="currentColor"/></svg>
+                        Naver로 시작하기
+                    </button>
+                </div>
+                <div class="mt-6 text-center text-xs text-gray-400">
+                    사법의 창 서비스에 오신 것을 환영합니다.
+                </div>
             </div>
         </div>
     </div>
 
     <!-- 기타 안내 뷰들 -->
-    <div id="terms-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="bg-white rounded-xl shadow-sm border border-gray-200 py-32 flex flex-col items-center justify-center text-center px-4"><div class="bg-gray-100 p-5 rounded-full mb-6"><i data-lucide="file-text" class="w-12 h-12 text-gray-400"></i></div><h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">이용약관 준비중</h3><p class="text-gray-500 max-w-lg leading-relaxed text-lg">보다 투명하고 안전한 서비스를 위해<br class="hidden md:block"/>이용약관을 준비하고 있습니다.<br/>조금만 기다려주세요!</p></div></div></div>
-    <div id="privacy-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="bg-white rounded-xl shadow-sm border border-gray-200 py-32 flex flex-col items-center justify-center text-center px-4"><div class="bg-gray-100 p-5 rounded-full mb-6"><i data-lucide="shield" class="w-12 h-12 text-gray-400"></i></div><h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">개인정보처리방침 준비중</h3><p class="text-gray-500 max-w-lg leading-relaxed text-lg">소중한 개인정보를 안전하게 보호하기 위해<br class="hidden md:block"/>개인정보처리방침을 준비하고 있습니다.<br/>조금만 기다려주세요!</p></div></div></div>
-    <div id="business-inquiry-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="bg-white rounded-xl shadow-sm border border-gray-200 py-32 flex flex-col items-center justify-center text-center px-4"><div class="bg-gray-100 p-5 rounded-full mb-6"><i data-lucide="building-2" class="w-12 h-12 text-gray-400"></i></div><h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Business 플랜 문의 준비중</h3><p class="text-gray-500 max-w-lg leading-relaxed text-lg">기업 및 기관을 위한 프리미엄 데이터 컨설팅 전용 문의 창구를<br class="hidden md:block"/>열심히 구축하고 있습니다.<br/>조금만 기다려주세요!</p></div></div></div>
+    <div id="terms-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4"><h3 class="text-2xl font-bold text-center mt-20">이용약관 준비중</h3></div></div>
+    <div id="privacy-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4"><h3 class="text-2xl font-bold text-center mt-20">개인정보처리방침 준비중</h3></div></div>
+    <div id="business-inquiry-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4"><h3 class="text-2xl font-bold text-center mt-20">Business 문의 준비중</h3></div></div>
 
-    <!-- ==========================================
-         [뷰 5] 엑셀 연동 검색 결과 화면
-         ========================================== -->
+    <!-- [뷰 5] 엑셀 검색 및 Gemini AI 결과 화면 -->
     <div id="search-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20">
         <div class="pt-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- 상단: 검색어 수정 영역 -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-8 flex flex-col md:flex-row items-center">
                 <div class="flex-grow flex items-center w-full md:w-auto px-3 py-2">
                     <i data-lucide="search" class="h-6 w-6 text-gray-400 mr-3"></i>
                     <input id="result-search-input" type="text" class="w-full text-gray-800 focus:outline-none text-lg placeholder-gray-400" placeholder="판사/검사 이름, 소속기관명으로 검색해보세요."/>
                 </div>
-                <button id="result-search-btn" class="w-full md:w-auto mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-bold transition-colors whitespace-nowrap">
-                    다시 검색
+                <button id="result-search-btn" class="w-full md:w-auto mt-2 md:mt-0 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-bold transition-colors whitespace-nowrap">다시 검색</button>
+            </div>
+
+            <div class="mb-6 border-b border-gray-200 pb-2 flex justify-between items-end">
+                <h2 class="text-xl font-bold text-gray-800">'<span id="display-search-term" class="text-blue-600"></span>' 검색 결과</h2>
+                <button onclick="callGeminiAI()" class="flex items-center text-sm bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full font-bold hover:bg-indigo-200 transition-colors shadow-sm">
+                    <i data-lucide="sparkles" class="w-4 h-4 mr-1"></i> Gemini AI 분석 보기
                 </button>
             </div>
 
-            <div class="mb-6 border-b border-gray-200 pb-2">
-                <h2 class="text-xl font-bold text-gray-800">
-                    '<span id="display-search-term" class="text-blue-600"></span>' 검색 결과
-                </h2>
+            <!-- Gemini AI 응답 영역 -->
+            <div id="gemini-ai-box" class="hidden mb-8 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-100 rounded-xl p-6 shadow-sm">
+                <div class="flex items-center mb-3">
+                    <i data-lucide="cpu" class="w-6 h-6 text-indigo-600 mr-2"></i>
+                    <h3 class="font-bold text-indigo-900 text-lg">AI 성향 요약 리포트</h3>
+                </div>
+                <div id="gemini-loading" class="hidden flex items-center text-indigo-400 text-sm">
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin mr-2"></i> 데이터를 종합하여 AI가 분석 중입니다...
+                </div>
+                <p id="gemini-content" class="text-gray-700 leading-relaxed text-sm whitespace-pre-wrap"></p>
             </div>
 
-            <!-- 하단: 엑셀 검색 결과 출력 영역 (UI_1 구조 반영) -->
-            <div id="excel-results-container" class="space-y-6">
-                <!-- Data will be injected here by JS -->
-            </div>
+            <!-- 엑셀 데이터 영역 -->
+            <div id="excel-results-container" class="space-y-6"></div>
         </div>
     </div>
 
 
-    <!-- JavaScript 로직 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
+    <script>
         lucide.createIcons();
 
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "YOUR_API_KEY", authDomain: "YOUR_AUTH_DOMAIN", projectId: "YOUR_PROJECT_ID", storageBucket: "YOUR_STORAGE_BUCKET", messagingSenderId: "YOUR_MESSAGING_SENDER_ID", appId: "YOUR_APP_ID"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-
+        // ==========================================
         // 뷰 전환 로직
+        // ==========================================
         const mainNav = document.getElementById('main-nav');
         const views = {
             home: document.getElementById('home-view'),
             login: document.getElementById('login-view'),
-            signup: document.getElementById('signup-view'),
-            forgot: document.getElementById('forgot-password-view'),
             search: document.getElementById('search-view'),
             terms: document.getElementById('terms-view'),
             privacy: document.getElementById('privacy-view'),
@@ -450,27 +260,28 @@
             window.scrollTo(0, 0);
         }
 
-        // 각 뷰 호출 함수
         function showHome() { switchView('home'); }
         function showLogin() { switchView('login', true); }
-        function showSignup() { switchView('signup', true); }
-        function showForgotPassword() { switchView('forgot', true); }
         function showTerms() { switchView('terms'); }
         function showPrivacy() { switchView('privacy'); }
         function showBusinessInquiry() { switchView('business'); }
 
-        // 검색 화면 전환 및 엑셀 데이터 검색 트리거
+        let currentSearchQuery = "";
+
         function showSearch(query) {
             switchView('search');
+            document.getElementById('gemini-ai-box').classList.add('hidden'); // 새로운 검색 시 AI 박스 초기화
             
             const resultInput = document.getElementById('result-search-input');
             const displayTerm = document.getElementById('display-search-term');
 
             if (query) {
+                currentSearchQuery = query;
                 resultInput.value = query;
                 displayTerm.textContent = query;
                 fetchAndSearchExcel(query);
             } else {
+                currentSearchQuery = "";
                 resultInput.value = '';
                 displayTerm.textContent = '';
                 document.getElementById('excel-results-container').innerHTML = '<div class="py-10 text-center text-gray-500">검색어를 입력해주세요.</div>';
@@ -478,257 +289,223 @@
         }
 
         // ==========================================
-        // 엑셀(SheetJS) 파싱 및 검색 로직
+        // Gemini API 연동 (AI 판례 분석 기능)
         // ==========================================
-        async function fetchAndSearchExcel(query) {
-            const container = document.getElementById('excel-results-container');
-            container.innerHTML = `
-                <div class="py-20 flex flex-col items-center justify-center">
-                    <i data-lucide="loader-2" class="w-8 h-8 text-blue-500 animate-spin mb-4"></i>
-                    <span class="text-gray-500 font-medium">judgelist.xlsx 에서 검색 중입니다...</span>
-                </div>`;
-            lucide.createIcons();
+        async function callGeminiAI() {
+            if (!currentSearchQuery) return;
+            
+            const aiBox = document.getElementById('gemini-ai-box');
+            const aiLoading = document.getElementById('gemini-loading');
+            const aiContent = document.getElementById('gemini-content');
+            
+            aiBox.classList.remove('hidden');
+            aiLoading.classList.remove('hidden');
+            aiContent.textContent = '';
+
+            // Gemini API 키 설정 (환경 주입 방식 활용)
+            const apiKey = ""; 
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            
+            const promptText = `당신은 '사법의 창'이라는 플랫폼의 수석 AI 법률 데이터 분석관입니다. 사용자가 '${currentSearchQuery}'라는 키워드로 판사/검사 정보를 검색했습니다. 이 이름에 대해 일반적인 법률적, 사회적 성향에 대한 가상의 종합 분석 리포트를 3문장으로 전문성 있게 작성해주세요. (단, 실제 인물 데이터가 아닌 데모 테스트용 가상 분석임을 마지막 문장에 명시해주세요.)`;
 
             try {
-                // 실제 static 폴더 내의 엑셀 파일 요청 시도
-                const response = await fetch('./static/judgelist.xlsx');
-                if (!response.ok) throw new Error('File not found');
-                
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                
-                // header: 1 옵션으로 2차원 배열 형태로 가져오기 (행번호 x, 열 A=0, B=1...)
-                const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                
-                // 검색어 필터링 (대소문자 구분 없음, 공백 무시)
-                const searchQuery = query.toLowerCase().replace(/\s+/g, '');
-                const results = [];
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }]
+                    })
+                });
 
-                for (let x = 0; x < excelData.length; x++) {
-                    const row = excelData[x];
-                    if (!row || row.length === 0) continue;
-                    
-                    // 행 전체 텍스트 합쳐서 검색어 포함 여부 확인
-                    const rowString = row.join(' ').toLowerCase().replace(/\s+/g, '');
-                    if (rowString.includes(searchQuery)) {
-                        results.push(row);
-                    }
-                }
+                if(!response.ok) throw new Error('Gemini API 호출에 실패했습니다.');
 
-                renderExcelResults(results, container);
-
+                const data = await response.json();
+                const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                aiLoading.classList.add('hidden');
+                aiContent.textContent = resultText || "분석 결과를 생성하지 못했습니다.";
             } catch (error) {
-                console.error('Excel 파일을 가져오는 중 오류가 발생했습니다:', error);
-                container.innerHTML = `
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 py-20 flex flex-col items-center justify-center text-center">
-                        <i data-lucide="alert-circle" class="w-12 h-12 text-red-400 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700">데이터를 불러올 수 없습니다.</h3>
-                        <p class="text-sm text-gray-500 mt-2">judgelist.xlsx 파일을 확인해주세요.</p>
-                    </div>`;
-                lucide.createIcons();
+                console.error("Gemini API Error:", error);
+                aiLoading.classList.add('hidden');
+                aiContent.textContent = "AI 분석 서버에 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
             }
         }
-
-        // 검색 결과 UI 렌더링 (사법의 창 UI_1.png 구조 반영)
-        function renderExcelResults(results, container) {
-            if (results.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 py-20 flex flex-col items-center justify-center text-center">
-                        <i data-lucide="search-x" class="w-12 h-12 text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700">검색 결과가 없습니다.</h3>
-                    </div>`;
-                lucide.createIcons();
-                return;
-            }
-
-            let html = '';
-            results.forEach(row => {
-                // x행의 각 열 값 매핑 (배열 인덱스 기준)
-                const Ax = row[0] || '정보 없음'; // 이름 등
-                const Bx = row[1] || '정보 없음'; // 직급 등
-                const Cx = row[2] || '정보 없음'; // 소속 등
-                const Dx = row[3] || '정보 없음'; // 부서 등
-                const Fx = row[5] || '정보 없음'; // 비고/링크 등
-                const Gx = row[6] || 'Gx 값';     // 이미지
-
-                // 요청하신 와이어프레임 UI 구조 (두꺼운 검은 테두리 및 텍스트 배치)
-                html += `
-                <div class="result-card bg-white p-6 flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-6">
-                    <!-- Gx Box (좌측 사각형) -->
-                    <div class="result-image-box w-40 h-40 shrink-0 flex items-center justify-center bg-gray-50">
-                        <span class="font-bold text-gray-600">${Gx}</span>
-                    </div>
-                    
-                    <!-- 텍스트 정보 영역 (우측) -->
-                    <div class="flex flex-col justify-center h-full py-2 space-y-3 w-full text-center sm:text-left">
-                        <h3 class="text-2xl font-extrabold text-black">${Ax}</h3>
-                        <p class="text-lg font-medium text-black">${Bx}</p>
-                        <p class="text-md font-medium text-black">${Cx} / ${Dx}</p>
-                        <a href="#" class="text-md font-bold text-black underline mt-2 block hover:text-blue-600 transition-colors">${Fx}</a>
-                    </div>
-                </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
 
         // ==========================================
-        // 기본 이벤트 바인딩 로직
+        // 실제 OAuth(Google, Naver) 로그인 플로우 구현
+        // ==========================================
+        // [개발자 설정] 아래 항목에 발급받은 실제 Client ID를 입력하세요.
+        // 현재는 임시 ID "000-101" 적용 중.
+        const GOOGLE_CLIENT_ID = "000-101"; 
+        const NAVER_CLIENT_ID = "000-101";
+        
+        // 현재 도메인 주소 (콜백 주소)
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
+
+        function loginWithGoogle() {
+            // 실제 구글 OAuth 인증 URL로 리다이렉트 (Implicit Flow)
+            const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=token&scope=email profile`;
+            window.location.href = url;
+        }
+
+        function loginWithNaver() {
+            // 실제 네이버 OAuth 인증 URL로 리다이렉트
+            const state = Math.random().toString(36).substring(2);
+            const url = `https://nid.naver.com/oauth2.0/authorize?client_id=${NAVER_CLIENT_ID}&response_type=token&redirect_uri=${REDIRECT_URI}&state=${state}`;
+            window.location.href = url;
+        }
+
+        // 리다이렉트되어 돌아왔을 때 Access Token 파싱 로직
+        function checkOAuthCallback() {
+            const hash = window.location.hash.substring(1);
+            if (!hash) return;
+            
+            const params = new URLSearchParams(hash);
+            const accessToken = params.get('access_token');
+
+            if (accessToken) {
+                // 성공적으로 토큰을 받아온 상태.
+                // 실제 서비스에서는 이 토큰을 백엔드(app.py)로 보내 회원가입/로그인 세션을 맺습니다.
+                localStorage.setItem('auth_user', '인증된 소셜 계정');
+                window.location.hash = ''; // URL 해시 초기화
+                updateAuthUI();
+                showHome();
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('auth_user');
+            updateAuthUI();
+            showHome();
+        }
+
+        function updateAuthUI() {
+            const user = localStorage.getItem('auth_user');
+            const desktopAuth = document.getElementById('nav-auth-desktop');
+            const mobileAuth = document.getElementById('nav-auth-mobile');
+            
+            if (user) {
+                desktopAuth.innerHTML = `<span class="text-sm font-medium text-blue-800">${user}님</span><button onclick="handleLogout()" class="text-gray-600 hover:text-red-600 font-medium transition-colors ml-3">로그아웃</button>`;
+                mobileAuth.innerHTML = `<span class="block px-4 py-2 text-sm font-medium text-blue-800">${user}님</span><button onclick="handleLogout()" class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors mt-2">로그아웃</button>`;
+            } else {
+                desktopAuth.innerHTML = `<button class="btn-signup bg-blue-800 text-white px-5 py-2 rounded-md font-medium hover:bg-blue-900 transition-colors">시작하기</button>`;
+                mobileAuth.innerHTML = `<button class="btn-signup w-full bg-blue-800 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-900 transition-colors">시작하기</button>`;
+                bindAuthButtons();
+            }
+        }
+
+        // ==========================================
+        // 초기화 및 기본 UI 이벤트 바인딩
         // ==========================================
         function bindAuthButtons() {
-            document.querySelectorAll('.btn-login').forEach(btn => {
-                btn.addEventListener('click', (e) => { e.preventDefault(); showLogin(); document.getElementById('mobile-menu').classList.add('hidden'); });
+            document.querySelectorAll('.btn-login, .btn-signup').forEach(btn => {
+                btn.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    showLogin(); 
+                    document.getElementById('mobile-menu')?.classList.add('hidden'); 
+                });
             });
-            document.querySelectorAll('.btn-signup').forEach(btn => {
-                btn.addEventListener('click', (e) => { e.preventDefault(); showSignup(); document.getElementById('mobile-menu').classList.add('hidden'); });
-            });
-            const btnForgotPassword = document.getElementById('btn-forgot-password');
-            if(btnForgotPassword) { btnForgotPassword.addEventListener('click', (e) => { e.preventDefault(); showForgotPassword(); }); }
         }
 
-        // 상단바 로고 및 링크 이벤트
         document.querySelectorAll('.link-home').forEach(link => {
             link.addEventListener('click', (e) => { e.preventDefault(); showHome(); });
         });
 
-        const linkTerms = document.getElementById('link-terms');
-        if (linkTerms) { linkTerms.addEventListener('click', (e) => { e.preventDefault(); showTerms(); }); }
-
-        const linkPrivacy = document.getElementById('link-privacy');
-        if (linkPrivacy) { linkPrivacy.addEventListener('click', (e) => { e.preventDefault(); showPrivacy(); }); }
-
-        const btnBusinessInquiry = document.getElementById('btn-business-inquiry');
-        if (btnBusinessInquiry) { btnBusinessInquiry.addEventListener('click', (e) => { e.preventDefault(); showBusinessInquiry(); }); }
+        document.getElementById('link-terms')?.addEventListener('click', (e) => { e.preventDefault(); showTerms(); });
+        document.getElementById('link-privacy')?.addEventListener('click', (e) => { e.preventDefault(); showPrivacy(); });
+        document.getElementById('btn-business-inquiry')?.addEventListener('click', (e) => { e.preventDefault(); showBusinessInquiry(); });
 
         document.querySelectorAll('#main-nav a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const targetId = this.getAttribute('href').substring(1);
                 
-                if (targetId === 'business') {
-                    showBusinessInquiry();
-                    document.getElementById('mobile-menu').classList.add('hidden');
-                    return;
+                if (targetId === 'business') { 
+                    showBusinessInquiry(); 
+                    document.getElementById('mobile-menu')?.classList.add('hidden'); 
+                    return; 
                 }
-
+                
                 showHome(); 
                 const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    setTimeout(() => {
-                        window.scrollTo({ top: targetElement.offsetTop - 64, behavior: 'smooth' });
-                    }, 50);
-                }
-                document.getElementById('mobile-menu').classList.add('hidden');
-            });
-        });
-
-        // 메인/결과 화면 검색 버튼 엔터키 연동
-        const mainSearchBtn = document.getElementById('main-search-btn');
-        if (mainSearchBtn) {
-            mainSearchBtn.addEventListener('click', () => {
-                const query = document.getElementById('main-search-input').value.trim();
-                showSearch(query);
-            });
-            document.getElementById('main-search-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') mainSearchBtn.click();
-            });
-        }
-
-        const resultSearchBtn = document.getElementById('result-search-btn');
-        if (resultSearchBtn) {
-            resultSearchBtn.addEventListener('click', () => {
-                const query = document.getElementById('result-search-input').value.trim();
-                if (query) showSearch(query);
-            });
-            document.getElementById('result-search-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') resultSearchBtn.click();
-            });
-        }
-
-        // Firebase 로그인 처리
-        const loginForm = document.getElementById('login-form');
-        const loginErrorMsg = document.getElementById('login-error');
-        const loginMessage = document.getElementById('login-message');
-
-        if (loginForm) {
-            loginForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                loginErrorMsg.classList.add('hidden');
-                if(loginMessage) loginMessage.classList.add('hidden');
                 
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                try {
-                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                    if (!userCredential.user.emailVerified) {
-                        await signOut(auth);
-                        loginErrorMsg.textContent = '이메일 인증이 완료되지 않았습니다. 메일함을 확인해주세요.';
-                        loginErrorMsg.classList.remove('hidden');
-                        return;
-                    }
-                    showHome();
-                } catch (error) {
-                    loginErrorMsg.textContent = '로그인 실패: 이메일 또는 비밀번호를 확인해주세요.';
-                    loginErrorMsg.classList.remove('hidden');
+                if (targetElement) { 
+                    // 네비게이션 바 높이(약 64px)를 고려하여 부드럽게 스크롤
+                    setTimeout(() => { 
+                        window.scrollTo({ 
+                            top: targetElement.offsetTop - 64, 
+                            behavior: 'smooth' 
+                        }); 
+                    }, 50); 
                 }
+                document.getElementById('mobile-menu')?.classList.add('hidden');
             });
-        }
-
-        // 모바일 메뉴 토글
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
-
-        // Firebase Auth 상태 감지
-        onAuthStateChanged(auth, (user) => {
-            const desktopAuth = document.getElementById('nav-auth-desktop');
-            const mobileAuth = document.getElementById('nav-auth-mobile');
-            if (user) {
-                desktopAuth.innerHTML = `<span class="text-sm font-medium text-blue-800">${user.email}님</span><button id="btn-logout" class="text-gray-600 hover:text-red-600 font-medium transition-colors">로그아웃</button>`;
-                mobileAuth.innerHTML = `<span class="block px-4 py-2 text-sm font-medium text-blue-800">${user.email}님</span><button id="btn-logout-mobile" class="w-full bg-gray-100 text-gray-800 px-4 py-2 rounded-md font-medium hover:bg-gray-200 transition-colors mt-2">로그아웃</button>`;
-                document.getElementById('btn-logout')?.addEventListener('click', () => signOut(auth));
-                document.getElementById('btn-logout-mobile')?.addEventListener('click', () => { signOut(auth); document.getElementById('mobile-menu').classList.add('hidden'); });
-            } else {
-                desktopAuth.innerHTML = `<button class="btn-login text-gray-600 hover:text-blue-800 font-medium transition-colors">로그인</button><button class="btn-signup bg-blue-800 text-white px-5 py-2 rounded-md font-medium hover:bg-blue-900 transition-colors">회원가입</button>`;
-                mobileAuth.innerHTML = `<button class="btn-login w-full bg-white text-blue-800 border border-blue-800 px-4 py-2 rounded-md font-medium hover:bg-blue-50 transition-colors">로그인</button><button class="btn-signup w-full bg-blue-800 text-white px-4 py-2 rounded-md font-medium hover:bg-blue-900 transition-colors">회원가입</button>`;
-                bindAuthButtons();
-            }
         });
 
-        // ==========================================
-        // 백엔드 API 연동 (인기 검색어 불러오기)
-        // ==========================================
+        document.getElementById('main-search-btn')?.addEventListener('click', () => { showSearch(document.getElementById('main-search-input').value.trim()); });
+        document.getElementById('main-search-input')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') showSearch(document.getElementById('main-search-input').value.trim()); });
+
+        document.getElementById('result-search-btn')?.addEventListener('click', () => { showSearch(document.getElementById('result-search-input').value.trim()); });
+        document.getElementById('result-search-input')?.addEventListener('keypress', (e) => { if (e.key === 'Enter') showSearch(document.getElementById('result-search-input').value.trim()); });
+
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', () => { document.getElementById('mobile-menu').classList.toggle('hidden'); });
+
+        // 앱 시작 시 토큰 콜백 확인 및 UI 업데이트
         document.addEventListener('DOMContentLoaded', () => {
+            checkOAuthCallback();
+            updateAuthUI();
             fetchTrendingData();
         });
+
+        // ==========================================
+        // 엑셀 파싱 및 인기 검색어 (기존 로직 유지)
+        // ==========================================
+        async function fetchAndSearchExcel(query) {
+            const container = document.getElementById('excel-results-container');
+            container.innerHTML = `<div class="py-20 flex justify-center"><i data-lucide="loader-2" class="w-8 h-8 text-blue-500 animate-spin"></i></div>`;
+            lucide.createIcons();
+
+            try {
+                const response = await fetch('./static/judgelist.xlsx');
+                if (!response.ok) throw new Error('File not found');
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                const excelData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+                const searchQuery = query.toLowerCase().replace(/\s+/g, '');
+                const results = excelData.filter(row => row && row.length > 0 && row.join(' ').toLowerCase().replace(/\s+/g, '').includes(searchQuery));
+                
+                if (results.length === 0) {
+                    container.innerHTML = `<div class="bg-white rounded-xl py-20 text-center"><i data-lucide="search-x" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i><h3 class="text-xl font-bold text-gray-700">검색 결과가 없습니다.</h3></div>`;
+                } else {
+                    container.innerHTML = results.map(row => `
+                        <div class="result-card bg-white p-6 flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-6">
+                            <div class="result-image-box w-40 h-40 shrink-0 flex items-center justify-center bg-gray-50"><span class="font-bold text-gray-600">${row[6] || 'Gx 값'}</span></div>
+                            <div class="flex flex-col justify-center h-full py-2 space-y-3 w-full text-center sm:text-left">
+                                <h3 class="text-2xl font-extrabold text-black">${row[0] || '정보 없음'}</h3>
+                                <p class="text-lg font-medium text-black">${row[1] || '정보 없음'}</p>
+                                <p class="text-md font-medium text-black">${row[2] || '정보 없음'} / ${row[3] || '정보 없음'}</p>
+                                <a href="#" class="text-md font-bold text-black underline mt-2 block hover:text-blue-600">${row[5] || '정보 없음'}</a>
+                            </div>
+                        </div>`).join('');
+                }
+                lucide.createIcons();
+            } catch (error) {
+                container.innerHTML = `<div class="bg-white rounded-xl py-20 text-center"><h3 class="text-xl font-bold text-red-500">데이터(judgelist.xlsx)를 불러올 수 없습니다.</h3></div>`;
+            }
+        }
 
         async function fetchTrendingData() {
             const container = document.getElementById('trending-container');
             try {
-                // 파이썬(app.py)의 /api/trending 주소로 데이터 요청
                 const response = await fetch('/api/trending');
                 if (!response.ok) throw new Error('API 응답 오류');
-                
                 const trends = await response.json();
-                
-                if (trends.length === 0) {
-                    container.innerHTML = `<span class="text-gray-400 text-xs">데이터가 없습니다. (엑셀 파일을 확인해주세요)</span>`;
-                } else {
-                    // 전달받은 인기 검색어를 HTML 해시태그 형태로 만들어 삽입
-                    container.innerHTML = trends.map(k => 
-                        `<span class="hover:text-white cursor-pointer font-bold transition-colors" onclick="showSearch('${k.term}')">#${k.term}</span>`
-                    ).join('');
-                }
+                if (trends.length === 0) container.innerHTML = `<span class="text-gray-400 text-xs">데이터가 없습니다.</span>`;
+                else container.innerHTML = trends.map(k => `<span class="hover:text-white cursor-pointer font-bold transition-colors" onclick="showSearch('${k.term}')">#${k.term}</span>`).join('');
             } catch (error) {
-                console.error('인기 검색어 로딩 실패:', error);
                 container.innerHTML = `<span class="text-gray-400 text-xs">데이터를 불러오지 못했습니다.</span>`;
             }
         }
-
     </script>
 </body>
 </html>
