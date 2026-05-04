@@ -28,6 +28,33 @@ def get_trending():
         print(f"인기 검색어 엑셀 읽기 오류: {e}")
         return jsonify([])
 
+@app.route('/api/reviews/recent')
+def get_recent_reviews():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, 'static', 'review.xlsx')
+    try:
+        # 파일이 존재하지 않으면 빈 리스트 반환
+        if not os.path.exists(file_path):
+            return jsonify([])
+        
+        wb = openpyxl.load_workbook(file_path, data_only=True)
+        sheet = wb.active
+        
+        reviews = []
+        # 2-4 데이터 수집
+        for row in sheet.iter_rows(min_row=2, max_row=4, values_only=True):
+            if any(row): # 빈 행이 아닌 경우에만 추가
+                reviews.append({
+                    'userId': str(row[0]) if row[0] else '익명',
+                    'date': str(row[1]) if row[1] else '',
+                    'content': str(row[2]) if row[2] else '',
+                    'rating': int(row[3]) if row[3] else 5
+                })
+        return jsonify(reviews)
+    except Exception as e:
+        print(f"최근 리뷰 불러오기 오류: {e}")
+        return jsonify([])
+
 @app.route('/api/review', methods=['POST'])
 def save_review():
     try:
