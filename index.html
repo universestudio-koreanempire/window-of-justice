@@ -7,7 +7,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- 불필요한 SheetJS(엑셀 라이브러리) 스크립트 삭제 (백엔드 처리로 변경됨) -->
 
     <style>
         html { scroll-behavior: smooth; }
@@ -181,7 +181,7 @@
         <div class="pt-24 max-w-5xl mx-auto px-4 h-[calc(100vh-64px)]">
             <h2 class="text-2xl font-bold text-gray-800 mb-4 ml-2">이용약관</h2>
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 h-full overflow-hidden flex flex-col">
-                <iframe src="./static/terms of use.pdf" class="w-full h-full flex-grow"></iframe>
+                <iframe src="./static/terms of use.pdf#toolbar=0" class="w-full h-full flex-grow"></iframe>
             </div>
         </div>
     </div>
@@ -189,13 +189,13 @@
         <div class="pt-24 max-w-5xl mx-auto px-4 h-[calc(100vh-64px)]">
             <h2 class="text-2xl font-bold text-gray-800 mb-4 ml-2">개인정보처리방침</h2>
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 h-full overflow-hidden flex flex-col">
-                <iframe src="./static/privacy policy.pdf" class="w-full h-full flex-grow"></iframe>
+                <iframe src="./static/privacy policy.pdf#toolbar=0" class="w-full h-full flex-grow"></iframe>
             </div>
         </div>
     </div>
     <div id="business-inquiry-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20"><div class="pt-28 max-w-7xl mx-auto px-4"><h3 class="text-2xl font-bold text-center mt-20">Business 문의 준비중</h3></div></div>
 
-    <!-- [뷰 5] 엑셀 검색 목록 화면 -->
+    <!-- [뷰 5] 검색 목록 화면 -->
     <div id="search-view" class="hidden fade-enter min-h-screen bg-gray-50 pb-20">
         <div class="pt-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-8 flex flex-col md:flex-row items-center">
@@ -222,12 +222,10 @@
             </button>
             
             <div class="bg-white rounded-xl shadow-sm border border-gray-300 p-8 flex flex-col md:flex-row gap-10">
-                <!-- 좌측: Hx 값 사각형 -->
                 <div class="result-image-box w-48 h-48 shrink-0 flex items-center justify-center bg-gray-50 border-4 border-black">
                     <span id="detail-hx" class="font-extrabold text-gray-700 text-3xl"></span>
                 </div>
                 
-                <!-- 우측: 정보 영역 -->
                 <div class="flex flex-col justify-center space-y-3 w-full">
                     <h2 id="detail-ax" class="text-4xl font-black text-black mb-2"></h2> 
                     <p id="detail-bx" class="text-lg font-medium text-black"></p>
@@ -306,7 +304,6 @@
         </div>
     </div>
 
-
     <script>
         lucide.createIcons();
 
@@ -362,7 +359,165 @@
         }
 
         // ==========================================
-        // Gemini API 연동 (백엔드를 통한 안전한 AI 분석 요청)
+        // 검색 로직 (백엔드 /api/search 호출로 변경)
+        // ==========================================
+        async function fetchAndSearchExcel(query) {
+            const container = document.getElementById('excel-results-container');
+            container.innerHTML = `<div class="py-20 flex justify-center"><i data-lucide="loader-2" class="w-8 h-8 text-blue-500 animate-spin"></i></div>`;
+            lucide.createIcons();
+
+            try {
+                // 프론트엔드에서 엑셀을 직접 파싱하지 않고, 백엔드에 검색어 전달
+                const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error('검색 서버 통신 오류');
+                
+                currentExcelResults = await response.json();
+                
+                if (currentExcelResults.length === 0) {
+                    container.innerHTML = `<div class="bg-white rounded-xl py-20 text-center"><i data-lucide="search-x" class="w-12 h-12 text-gray-300 mx-auto mb-4"></i><h3 class="text-xl font-bold text-gray-700">검색 결과가 없습니다.</h3></div>`;
+                } else {
+                    container.innerHTML = currentExcelResults.map((row, index) => {
+                        const Ax = row[0] || '정보 없음';
+                        const Bx = row[1] || '';
+                        const Cx = row[2] || '';
+                        const Dx = row[3] || '';
+                        const Fx = row[5] || '';
+                        const Hx = row[7] || 'Hx'; 
+                        
+                        return `
+                        <div onclick="showDetail(${index})" class="result-card bg-white p-6 flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-6">
+                            <div class="result-image-box w-40 h-40 shrink-0 flex items-center justify-center bg-gray-50">
+                                <span class="font-bold text-gray-600 text-xl">${Hx}</span>
+                            </div>
+                            <div class="flex flex-col justify-center h-full py-2 space-y-3 w-full text-center sm:text-left">
+                                <h3 class="text-2xl font-extrabold text-black">${Ax}</h3>
+                                <p class="text-lg font-medium text-black">${Bx}</p>
+                                <p class="text-md font-medium text-black">${Cx} ${Dx ? '/ '+Dx : ''}</p>
+                                <span class="text-md font-bold text-black underline mt-2 block">${Fx}</span>
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
+                lucide.createIcons();
+            } catch (error) {
+                container.innerHTML = `<div class="bg-white rounded-xl py-20 text-center"><h3 class="text-xl font-bold text-red-500">데이터를 불러올 수 없습니다. 서버 연결을 확인해주세요.</h3></div>`;
+            }
+        }
+
+        // ==========================================
+        // 상세 화면 렌더링
+        // ==========================================
+        function showDetail(index) {
+            const row = currentExcelResults[index];
+            if(!row) return;
+
+            document.getElementById('gemini-ai-box').classList.add('hidden'); 
+            
+            currentDetailAx = row[0] || '정보 없음'; 
+
+            document.getElementById('detail-ax').textContent = currentDetailAx; 
+            document.getElementById('detail-bx').textContent = row[1] || '';
+            document.getElementById('detail-cx').textContent = row[2] || '';
+            document.getElementById('detail-dx').textContent = row[3] || '';
+            document.getElementById('detail-ex').textContent = row[4] || '';
+            document.getElementById('detail-fx').textContent = row[5] || '';
+            document.getElementById('detail-gx').textContent = row[6] || '';
+            document.getElementById('detail-hx').textContent = row[7] || 'Hx';
+            
+            switchView('detail');
+            loadRecentReviews(); 
+        }
+
+        // ==========================================
+        // 리뷰 관련 로직
+        // ==========================================
+        async function loadRecentReviews() {
+            const container = document.getElementById('recent-reviews-container');
+            container.innerHTML = `<div class="col-span-full text-center text-gray-500 py-4">리뷰를 불러오는 중입니다...</div>`;
+            try {
+                const response = await fetch(`/api/reviews/recent?target=${encodeURIComponent(currentDetailAx)}`);
+                if (!response.ok) throw new Error('응답 오류');
+                const reviews = await response.json();
+                
+                if (reviews.length === 0) {
+                    container.innerHTML = `<div class="col-span-full text-center text-gray-500 py-8 bg-white rounded-xl shadow-sm border border-gray-200">아직 작성된 리뷰가 없습니다. 첫 리뷰를 남겨주세요!</div>`;
+                    return;
+                }
+
+                container.innerHTML = reviews.map(rev => {
+                    const stars = '⭐'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
+                    return `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col justify-between hover:shadow-md transition-shadow">
+                        <div>
+                            <div class="flex justify-between items-start mb-3">
+                                <span class="font-bold text-gray-800">${rev.userId}</span>
+                                <span class="text-yellow-400 text-sm tracking-widest">${stars}</span>
+                            </div>
+                            <p class="text-gray-600 text-sm line-clamp-4 leading-relaxed">"${rev.content}"</p>
+                        </div>
+                        <div class="mt-4 text-xs text-gray-400 text-right">${rev.date}</div>
+                    </div>
+                    `;
+                }).join('');
+                lucide.createIcons();
+            } catch (error) {
+                container.innerHTML = `<div class="col-span-full text-center text-red-500 py-4">리뷰를 불러오는 중 오류가 발생했습니다.</div>`;
+            }
+        }
+
+        function openReviewModal() {
+            const user = localStorage.getItem('auth_user');
+            if (!user) {
+                alert("리뷰를 남기시려면 로그인이 필요합니다.");
+                showLogin();
+                return;
+            }
+            
+            document.getElementById('review-content').value = '';
+            document.getElementById('review-error').classList.add('hidden');
+            document.getElementById('review-modal').classList.remove('hidden');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('review-modal').classList.add('hidden');
+        }
+
+        async function submitReview() {
+            const content = document.getElementById('review-content').value.trim();
+            const rating = document.getElementById('review-rating').value;
+            const errorDiv = document.getElementById('review-error');
+            const user = localStorage.getItem('auth_user') || '알수없는유저';
+
+            if (content.length === 0) {
+                errorDiv.textContent = "리뷰 내용을 입력해주세요.";
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+            
+            errorDiv.classList.add('hidden');
+            
+            try {
+                const response = await fetch('/api/review', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user, content: content, rating: rating, targetId: currentDetailAx })
+                });
+                
+                if(response.ok) {
+                    alert("리뷰가 성공적으로 등록되어 엑셀(review.xlsx) 파일에 저장되었습니다!");
+                    closeReviewModal();
+                    loadRecentReviews();
+                } else {
+                    throw new Error("서버 응답 오류");
+                }
+            } catch(e) {
+                errorDiv.textContent = "리뷰 저장 중 오류가 발생했습니다. (서버 연결 확인 필요)";
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        // ==========================================
+        // Gemini AI 연동 (보안을 위해 백엔드를 통한 호출)
         // ==========================================
         async function callGeminiAI() {
             if (!currentDetailAx) return;
@@ -375,7 +530,7 @@
             aiContent.textContent = '';
             
             try {
-                // API 키와 리뷰 수집 로직을 백엔드로 숨기고, 우리는 '대상자 이름'만 보냅니다.
+                // API 키와 리뷰 수집 로직을 백엔드로 숨겼으므로 '대상자 이름'만 서버로 전송합니다.
                 const response = await fetch('/api/ai/analyze', { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
