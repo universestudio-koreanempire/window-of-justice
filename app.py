@@ -7,42 +7,14 @@ from datetime import datetime
 
 app = Flask(__name__, static_folder='static')
 
+# 1. 메인 웹페이지(index.html) 서빙
 @app.route('/')
 def home():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     index_path = os.path.join(base_dir, 'index.html')
     return send_file(index_path)
 
-# [1] 백엔드 기반 엑셀 검색 (안정성과 속도 향상)
-@app.route('/api/search')
-def search_judges():
-    query = request.args.get('q', '').lower().replace(' ', '')
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(base_dir, 'static', 'judgelist.xlsx')
-    
-    try:
-        if not os.path.exists(file_path):
-            print(f"경고: {file_path} 파일을 찾을 수 없습니다.")
-            return jsonify([])
-            
-        wb = openpyxl.load_workbook(file_path, data_only=True)
-        sheet = wb.active
-        
-        results = []
-        for i, row in enumerate(sheet.iter_rows(values_only=True)):
-            if i == 0: continue # 1행 헤더(컬럼명)는 검색에서 제외
-            if not any(row): continue
-            
-            # 행의 모든 텍스트를 하나로 합쳐서 검색어가 포함되어 있는지 확인
-            row_str = ' '.join([str(cell) for cell in row if cell]).lower().replace(' ', '')
-            if query in row_str:
-                results.append([str(c) if c is not None else '' for c in row])
-                
-        return jsonify(results)
-    except Exception as e:
-        print(f"백엔드 검색 오류: {e}")
-        return jsonify([])
-
+# 2. 인기 검색어 데이터 API (searchlist.xlsx)
 @app.route('/api/trending')
 def get_trending():
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -62,6 +34,7 @@ def get_trending():
         print(f"인기 검색어 엑셀 읽기 오류: {e}")
         return jsonify([])
 
+# 3. 화면 표시용 최근 리뷰 API (대상자별 최신 3개 제한)
 @app.route('/api/reviews/recent')
 def get_recent_reviews():
     target = request.args.get('target', '')
@@ -92,6 +65,7 @@ def get_recent_reviews():
         print(f"최근 리뷰 불러오기 오류: {e}")
         return jsonify([])
 
+# 4. 리뷰 저장 API (항상 2행에 삽입하여 최신순 유지)
 @app.route('/api/review', methods=['POST'])
 def save_review():
     try:
@@ -129,7 +103,7 @@ def save_review():
         print(f"리뷰 엑셀 저장 중 오류 발생: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
-# [2] 환경 변수 기반 AI 분석 기능 (보안 처리)
+# 5. Gemini AI 분석 API (보안을 위한 환경 변수 사용 및 전체 리뷰 분석 기능)
 @app.route('/api/ai/analyze', methods=['POST'])
 def analyze_judge():
     try:
@@ -142,7 +116,7 @@ def analyze_judge():
         file_path = os.path.join(base_dir, 'static', 'review.xlsx')
         review_context = ""
         
-        # 전체 리뷰 찾아서 프롬프트 재료로 쓰기
+        # 엑셀에서 해당 대상자의 '전체' 리뷰를 수집하여 프롬프트 재료로 구성
         if os.path.exists(file_path):
             wb = openpyxl.load_workbook(file_path, data_only=True)
             sheet = wb.active
@@ -163,12 +137,13 @@ def analyze_judge():
         
         prompt_text = f"당신은 '사법의 창'이라는 플랫폼의 수석 AI 법률 데이터 분석관입니다. 사용자가 '{target_id}'(판사/검사)에 대한 종합 분석을 요청했습니다.\n\n{review_context}위의 데이터(별점 및 내용)를 반드시 분석에 적극적으로 반영하여, 이 법관의 재판 진행 스타일, 특징, 시민들의 평가를 종합한 분석 리포트를 3문장으로 전문성 있게 요약해주세요. (마지막에는 실제 인물이 아닌 테스트 데모임을 명시해주세요.)"
 
-        # 💡Render 서버 환경 변수에 설정된 GEMINI_API_KEY를 가져옵니다.
+        # Render 서버 환경 변수에서 구글 API 키를 안전하게 불러옵니다.
         GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '') 
         endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key={GEMINI_API_KEY}"
         
         payload = {"contents": [{"parts": [{"text": prompt_text}]}]}
         
+        # 보안 이슈 없이 백엔드에서 Google API와 직접 통신
         response = requests.post(endpoint, json=payload, headers={'Content-Type': 'application/json'})
         
         if response.status_code == 200:
@@ -184,4 +159,5 @@ def analyze_judge():
         return jsonify({'success': False, 'message': '서버 처리 중 오류가 발생했습니다.'})
 
 if __name__ == '__main__':
+    # Render 플랫폼 배포 포트에 맞추어 실행
     app.run(host='0.0.0.0', port=10000)
