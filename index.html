@@ -7,7 +7,6 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- 검색 기능 복구를 위해 SheetJS 스크립트를 다시 추가했습니다 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
@@ -16,14 +15,12 @@
         .fade-enter { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        .result-card { border: 3px solid #000; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
-        .result-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-color: #2563eb; }
-        .result-image-box { border: 3px solid #000; }
+        .result-card { transition: all 0.3s ease; cursor: pointer; }
+        .result-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgba(37, 99, 235, 0.15); border-color: #bfdbfe; }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50 text-gray-800">
 
-    <!-- 공통 Navigation Bar -->
     <nav id="main-nav" class="fixed w-full bg-white shadow-sm z-50 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -222,19 +219,20 @@
                 <i data-lucide="arrow-left" class="w-5 h-5 mr-1"></i> 검색 목록으로 돌아가기
             </button>
             
-            <div class="bg-white rounded-xl shadow-sm border border-gray-300 p-8 flex flex-col md:flex-row gap-10">
-                <div class="result-image-box w-48 h-48 shrink-0 flex items-center justify-center bg-gray-50 border-4 border-black">
-                    <span id="detail-hx" class="font-extrabold text-gray-700 text-3xl"></span>
+            <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-8 flex flex-col md:flex-row gap-10">
+                <!-- UI가 개선된 좌측 Hx 값 사각형 -->
+                <div class="w-48 h-48 shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 shadow-inner">
+                    <span id="detail-hx" class="font-extrabold text-blue-800 text-4xl tracking-tight"></span>
                 </div>
                 
                 <div class="flex flex-col justify-center space-y-3 w-full">
-                    <h2 id="detail-ax" class="text-4xl font-black text-black mb-2"></h2> 
-                    <p id="detail-bx" class="text-lg font-medium text-black"></p>
-                    <p id="detail-cx" class="text-lg font-medium text-black"></p>
-                    <p id="detail-dx" class="text-lg font-medium text-black"></p>
-                    <p id="detail-ex" class="text-lg font-medium text-black"></p>
-                    <p id="detail-fx" class="text-lg font-medium text-black"></p>
-                    <p id="detail-gx" class="text-lg font-medium text-black"></p>
+                    <h2 id="detail-ax" class="text-4xl font-black text-gray-900 mb-2"></h2> 
+                    <p id="detail-bx" class="text-lg font-medium text-gray-700"></p>
+                    <p id="detail-cx" class="text-md text-gray-500"></p>
+                    <p id="detail-dx" class="text-md text-gray-500"></p>
+                    <p id="detail-ex" class="text-md text-gray-500"></p>
+                    <p id="detail-fx" class="text-md text-blue-600 underline font-medium"></p>
+                    <p id="detail-gx" class="text-md text-gray-500"></p>
                 </div>
             </div>
 
@@ -390,16 +388,17 @@
                         const Fx = row[5] || '';
                         const Hx = row[7] || 'Hx'; 
                         
+                        // UI가 개선된 검색 결과 리스트 박스
                         return `
-                        <div onclick="showDetail(${index})" class="result-card bg-white p-6 flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-6">
-                            <div class="result-image-box w-40 h-40 shrink-0 flex items-center justify-center bg-gray-50">
-                                <span class="font-bold text-gray-600 text-xl">${Hx}</span>
+                        <div onclick="showDetail(${index})" class="result-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-6 group">
+                            <div class="w-40 h-40 shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-inner group-hover:scale-105 transition-transform duration-300">
+                                <span class="font-extrabold text-blue-800 text-2xl tracking-tight">${Hx}</span>
                             </div>
                             <div class="flex flex-col justify-center h-full py-2 space-y-3 w-full text-center sm:text-left">
-                                <h3 class="text-2xl font-extrabold text-black">${Ax}</h3>
-                                <p class="text-lg font-medium text-black">${Bx}</p>
-                                <p class="text-md font-medium text-black">${Cx} ${Dx ? '/ '+Dx : ''}</p>
-                                <span class="text-md font-bold text-black underline mt-2 block">${Fx}</span>
+                                <h3 class="text-2xl font-extrabold text-gray-900 group-hover:text-blue-700 transition-colors">${Ax}</h3>
+                                <p class="text-lg font-medium text-gray-700">${Bx}</p>
+                                <p class="text-md text-gray-500">${Cx} ${Dx ? '/ '+Dx : ''}</p>
+                                <span class="text-md font-bold text-blue-600 underline mt-2 block opacity-80 group-hover:opacity-100">${Fx}</span>
                             </div>
                         </div>`;
                     }).join('');
