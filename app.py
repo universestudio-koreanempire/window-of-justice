@@ -1,9 +1,9 @@
 import os
+import requests
 from flask import Flask, send_file, jsonify, request
 import openpyxl
 from collections import Counter
 from datetime import datetime
-import requests # 새로 추가됨: Gemini API 통신을 위한 HTTP 요청 모듈
 
 app = Flask(__name__, static_folder='static')
 
@@ -13,11 +13,44 @@ def home():
     index_path = os.path.join(base_dir, 'index.html')
     return send_file(index_path)
 
+# [1] 백엔드 기반 엑셀 검색 (안정성과 속도 향상)
+@app.route('/api/search')
+def search_judges():
+    query = request.args.get('q', '').lower().replace(' ', '')
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, 'static', 'judgelist.xlsx')
+    
+    try:
+        if not os.path.exists(file_path):
+            print(f"경고: {file_path} 파일을 찾을 수 없습니다.")
+            return jsonify([])
+            
+        wb = openpyxl.load_workbook(file_path, data_only=True)
+        sheet = wb.active
+        
+        results = []
+        for i, row in enumerate(sheet.iter_rows(values_only=True)):
+            if i == 0: continue # 1행 헤더(컬럼명)는 검색에서 제외
+            if not any(row): continue
+            
+            # 행의 모든 텍스트를 하나로 합쳐서 검색어가 포함되어 있는지 확인
+            row_str = ' '.join([str(cell) for cell in row if cell]).lower().replace(' ', '')
+            if query in row_str:
+                results.append([str(c) if c is not None else '' for c in row])
+                
+        return jsonify(results)
+    except Exception as e:
+        print(f"백엔드 검색 오류: {e}")
+        return jsonify([])
+
 @app.route('/api/trending')
 def get_trending():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(base_dir, 'static', 'searchlist.xlsx')
     try:
+        if not os.path.exists(file_path):
+            return jsonify([])
+            
         wb = openpyxl.load_workbook(file_path, data_only=True)
         sheet = wb.active
         search_terms = [str(row[0]).strip() for row in sheet.iter_rows(min_col=1, max_col=1, values_only=True) if row[0]]
@@ -29,7 +62,6 @@ def get_trending():
         print(f"인기 검색어 엑셀 읽기 오류: {e}")
         return jsonify([])
 
-# [화면 UI 용] 최근 리뷰 3개만 불러오기
 @app.route('/api/reviews/recent')
 def get_recent_reviews():
     target = request.args.get('target', '')
@@ -53,100 +85,12 @@ def get_recent_reviews():
                         'content': str(row[2]) if row[2] else '',
                         'rating': int(row[3]) if row[3] else 5
                     })
-                    if len(reviews) >= 3: # 딱 3개까지만 제한
+                    if len(reviews) >= 3:
                         break
         return jsonify(reviews)
     except Exception as e:
         print(f"최근 리뷰 불러오기 오류: {e}")
         return jsonify([])
-
-# [Gemini AI 용] 해당 법관의 '전체 리뷰' 모조리 불러오기
-@app.route('/api/reviews/all')
-def get_all_reviews():
-    target = request.args.get('target', '')
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(base_dir, 'static', 'review.xlsx')
-    try:
-        if not os.path.exists(file_path):
-            return jsonify([])
-        
-        wb = openpyxl.load_workbook(file_path, data_only=True)
-        sheet = wb.active
-        
-        reviews = []
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-            if any(row): 
-                row_target = str(row[4]).strip() if len(row) > 4 and row[4] else ''
-                if row_target == str(target).strip():
-                    reviews.append({
-                        'rating': int(row[3]) if row[3] else 5,
-                        'content': str(row[2]) if row[2] else ''
-                    })
-                    # 3개 제한 없이 일치하는 것은 무한정 모두 배열에 담습니다.
-        return jsonify(reviews)
-    except Exception as e:
-        print(f"전체 리뷰 불러오기 오류: {e}")
-        return jsonify([])
-
-# [Gemini AI 용] 프론트엔드의 요청을 받아 백엔드에서 리뷰를 모으고 API를 호출하는 로직 (새로 추가)
-@app.route('/api/ai/analyze', methods=['POST'])
-def analyze_target():
-    data = request.json
-    target = data.get('targetId', '')
-    if not target:
-        return jsonify({'success': False, 'message': '대상자가 지정되지 않았습니다.'}), 400
-
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(base_dir, 'static', 'review.xlsx')
-    reviews = []
-    
-    # 1. 엑셀에서 해당 타겟의 전체 리뷰 가져오기 (백엔드 내부 로직)
-    try:
-        if os.path.exists(file_path):
-            wb = openpyxl.load_workbook(file_path, data_only=True)
-            sheet = wb.active
-            for row in sheet.iter_rows(min_row=2, values_only=True):
-                if any(row):
-                    row_target = str(row[4]).strip() if len(row) > 4 and row[4] else ''
-                    if row_target == str(target).strip():
-                        reviews.append({
-                            'rating': int(row[3]) if row[3] else 5,
-                            'content': str(row[2]) if row[2] else ''
-                        })
-    except Exception as e:
-        print(f"리뷰 로드 오류: {e}")
-
-    # 2. 리뷰 컨텍스트 생성
-    review_context = ""
-    if reviews:
-        review_context = "다음은 이 법관에 대해 실제 시민들이 남긴 사이트 내 전체 리뷰 데이터입니다:\n"
-        for idx, r in enumerate(reviews):
-            review_context += f"{idx + 1}. 별점 {r['rating']}점: \"{r['content']}\"\n"
-        review_context += "\n"
-    else:
-        review_context = "현재 이 법관에 대해 플랫폼에 등록된 시민 리뷰는 없습니다.\n\n"
-
-    # 3. 프롬프트 구성
-    prompt_text = f"당신은 '사법의 창'이라는 플랫폼의 수석 AI 법률 데이터 분석관입니다. 사용자가 '{target}'(판사/검사)에 대한 종합 분석을 요청했습니다.\n\n{review_context}위의 데이터(별점 및 내용)를 반드시 분석에 적극적으로 반영하여, 이 법관의 재판 진행 스타일, 특징, 시민들의 평가를 종합한 분석 리포트를 3문장으로 전문성 있게 요약해주세요. (마지막에는 실제 인물이 아닌 테스트 데모임을 명시해주세요.)"
-
-    # 4. Gemini API 호출 (보안을 위해 소스코드 하드코딩 대신 환경 변수에서 API 키를 가져옵니다)
-    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '') 
-    endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key={GEMINI_API_KEY}"
-
-    try:
-        response = requests.post(
-            endpoint,
-            headers={'Content-Type': 'application/json'},
-            json={"contents": [{"parts": [{"text": prompt_text}]}]}
-        )
-        response.raise_for_status()
-        ai_data = response.json()
-        result_text = ai_data.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '분석을 생성하지 못했습니다.')
-        return jsonify({'success': True, 'text': result_text})
-    except Exception as e:
-        print(f"Gemini API 오류: {e}")
-        return jsonify({'success': False, 'message': 'AI 분석 서버 통신 중 오류가 발생했습니다.'}), 500
-
 
 @app.route('/api/review', methods=['POST'])
 def save_review():
@@ -184,6 +128,60 @@ def save_review():
     except Exception as e:
         print(f"리뷰 엑셀 저장 중 오류 발생: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
+
+# [2] 환경 변수 기반 AI 분석 기능 (보안 처리)
+@app.route('/api/ai/analyze', methods=['POST'])
+def analyze_judge():
+    try:
+        data = request.json
+        target_id = data.get('targetId', '')
+        if not target_id:
+            return jsonify({'success': False, 'message': '분석 대상자가 없습니다.'})
+
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(base_dir, 'static', 'review.xlsx')
+        review_context = ""
+        
+        # 전체 리뷰 찾아서 프롬프트 재료로 쓰기
+        if os.path.exists(file_path):
+            wb = openpyxl.load_workbook(file_path, data_only=True)
+            sheet = wb.active
+            reviews = []
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                if any(row): 
+                    row_target = str(row[4]).strip() if len(row) > 4 and row[4] else ''
+                    if row_target == str(target_id).strip():
+                        reviews.append({'rating': int(row[3]) if row[3] else 5, 'content': str(row[2]) if row[2] else ''})
+            
+            if reviews:
+                review_context = "다음은 이 법관에 대해 실제 시민들이 남긴 사이트 내 전체 리뷰 데이터입니다:\n"
+                for idx, r in enumerate(reviews):
+                    review_context += f"{idx + 1}. 별점 {r['rating']}점: \"{r['content']}\"\n"
+                review_context += "\n\n"
+            else:
+                review_context = "현재 이 법관에 대해 플랫폼에 등록된 시민 리뷰는 없습니다.\n\n"
+        
+        prompt_text = f"당신은 '사법의 창'이라는 플랫폼의 수석 AI 법률 데이터 분석관입니다. 사용자가 '{target_id}'(판사/검사)에 대한 종합 분석을 요청했습니다.\n\n{review_context}위의 데이터(별점 및 내용)를 반드시 분석에 적극적으로 반영하여, 이 법관의 재판 진행 스타일, 특징, 시민들의 평가를 종합한 분석 리포트를 3문장으로 전문성 있게 요약해주세요. (마지막에는 실제 인물이 아닌 테스트 데모임을 명시해주세요.)"
+
+        # 💡Render 서버 환경 변수에 설정된 GEMINI_API_KEY를 가져옵니다.
+        GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '') 
+        endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key={GEMINI_API_KEY}"
+        
+        payload = {"contents": [{"parts": [{"text": prompt_text}]}]}
+        
+        response = requests.post(endpoint, json=payload, headers={'Content-Type': 'application/json'})
+        
+        if response.status_code == 200:
+            res_data = response.json()
+            text = res_data.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+            if text:
+                return jsonify({'success': True, 'text': text})
+        
+        return jsonify({'success': False, 'message': 'API 키 설정이나 통신 문제로 AI 분석 결과를 받아오지 못했습니다.'})
+        
+    except Exception as e:
+        print(f"AI 분석 오류: {e}")
+        return jsonify({'success': False, 'message': '서버 처리 중 오류가 발생했습니다.'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
